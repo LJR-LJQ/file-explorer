@@ -1,0 +1,14 @@
+html
+	head
+		title | 喵德利的文件传输机
+	body
+		@produceGoBack
+			a href='#' | 返回目录
+		br
+		div
+			@produceFileName | 文件名：
+			br
+			@produceSize | 大小：
+			br
+			@produceDownload
+				a href='#' | 下载

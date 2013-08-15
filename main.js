@@ -1,10 +1,21 @@
-var parseKetchup = require('parseKetchup').parseKetchup,
-	toHtml5Text = require('toHtml5Text').toHtml5Text;
+var express = require('express'),
+	path = require('path'),
+	url = require('url');
 
-var fs = require('fs');
+var respondTag = require('./respondTag').respondTag,
+	respondIndexPage = require('./respondIndexPage').respondIndexPage;
 
-var input = fs.readFileSync('input.txt', {encoding: 'utf8'}),
-	output;
+var app = express();
 
-output = toHtml5Text(parseKetchup(input));
-fs.writeFileSync('output.txt', output, {encoding: 'utf8'});
+var webRoot = path.resolve(__dirname, 'website');
+app.use(express.static(webRoot));
+app.get('/', redirectToIndex);
+app.get('/index', respondIndexPage);
+app.get('/tag', respondTag);
+app.listen(80);
+
+function redirectToIndex(req, res) {
+	res.statusCode = 301;
+	res.setHeader('Location', '/index');
+	res.end();
+}

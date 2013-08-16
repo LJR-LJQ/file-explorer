@@ -3,7 +3,10 @@ var express = require('express'),
 	url = require('url');
 
 var respondTag = require('./respondTag').respondTag,
-	respondIndexPage = require('./respondIndexPage').respondIndexPage;
+	respondIndexPage = require('./respondIndexPage').respond,
+	respondFavouritePage =require('./respondFavouritePage').respond,
+	respondFavouriteEditPage = require('./respondFavouriteEditPage').respond,
+	respondFavouriteEditItemPage = require('./respondFavouriteEditItemPage').respond;
 
 var app = express();
 
@@ -11,6 +14,9 @@ var webRoot = path.resolve(__dirname, 'website');
 app.use(express.static(webRoot));
 app.get('/', redirectToIndex);
 app.get('/index', respondIndexPage);
+app.get('/favourite', respondFavouritePage);
+app.get('/favourite-edit', respondFavouriteEditPage);
+app.get('/favourite-edit-item', respondFavouriteEditItemPage);
 app.get('/tag', respondTag);
 app.listen(80);
 

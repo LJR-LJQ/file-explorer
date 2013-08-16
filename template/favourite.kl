@@ -8,7 +8,7 @@ html
 		script src=auto-refresh.js type=text/javascript
 		link href=bootstrap/css/bootstrap.min.css rel=stylesheet media=screen
 		link href=main.css rel=stylesheet
-		link href=index.css rel=stylesheet
+		link href=favourite.css rel=stylesheet
 		link href=bootstrap/css/bootstrap-responsive.min.css rel=stylesheet media=screen
 		script src=bootstrap/js/bootstrap.min.js type=text/javascript
 
@@ -31,28 +31,10 @@ html
 								a href=# | Sign out
 
 		div class=`nav nav-tabs`
+			li
+				a href=index | Computer
 			li class=active
-				a href=# | Computer
-			li
-				a href=favourite | Favourite
-
-		ul class=breadcrumb
-			li
-				a href=# | Computer
-				span class=divider | /
-			li
-				a href=# | C
-				span class=divider | /
-			li
-				a href=# | Windows
-				span class=divider | /
-			li
-				a href=# | Windows
-				span class=divider | /
-			li
-				a href=# | Windows
-				span class=divider | /
-			li class=active | System32
+				a href=# | Favourite
 
 		ul class=`nav nav-tabs nav-stacked`
 			li
@@ -72,43 +54,7 @@ html
 					| Dir1
 					i class=`icon-chevron-right`
 
-		div class=`pager pull-left dir-pagination`
-			li
-				a href=# | Previous
-			|  
-			li
-				a href=# | Next
-
-		a class=`btn btn-link pull-right` href=# | View all
-
-		div class=clearfix
-
-		ul class=`nav nav-tabs nav-stacked file-list`
-			li
-				a href=#
-					| File
-					i class=`icon-chevron-right`
-			li
-				a href=#
-					| File
-					i class=`icon-chevron-right`
-			li
-				a href=#
-					| File
-					i class=`icon-chevron-right`
-			li
-				a href=#
-					| File
-					i class=`icon-chevron-right`
-
-		div class=`pager pull-left dir-pagination`
-			li
-				a href=# | Previous
-			|  
-			li
-				a href=# | Next
-
-		a class=`btn btn-link pull-right` href=# | View all
+		a href=favourite-edit class=`btn pull-right edit-favourite-btn` | Start Edit
 
 		div class=clearfix
 

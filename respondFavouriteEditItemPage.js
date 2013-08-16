@@ -7,7 +7,7 @@ var ketchup = require('ketchup-language');
 
 function respond(req, res) {
 	// 根据模板生成内容返回
-	var templateFile = path.resolve(__dirname, 'template/index.kl');
+	var templateFile = path.resolve(__dirname, 'template/favourite-edit-item.kl');
 	var data = new Data();
 	var content = ketchup.compile(templateFile, data);
 	respondHtmlText(res, content);

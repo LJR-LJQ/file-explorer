@@ -6,7 +6,15 @@ var http = require('http'),
 var tag = 0;
 
 watchFile('template/index.kl', '/index');
+watchFile('website/index.css', '/index');
 watchFile('website/main.css', '/index');
+
+watchFile('template/favourite.kl', '/favourite');
+watchFile('website/favourite.css', '/favourite');
+
+watchFile('template/favourite-edit.kl', '/favourite-edit');
+
+watchFile('template/favourite-edit-item.kl', '/favourite-edit-item');
 
 function watchFile(filename, pathname) {
 	fs.watchFile(filename, {interval: 1000}, function(curr, prev) {

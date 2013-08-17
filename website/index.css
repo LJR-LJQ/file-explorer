@@ -1,7 +1,16 @@
 .dir-action-btn {
-  padding: 0 5px 0 0;
+	margin-bottom: 10px;
 }
 
 .no-margin-hr {
   margin:5px 0;
+}
+
+.index-toolbar {
+	margin-top: 0;
+	margin-bottom: 10px;
+}
+
+.path-breadcrumb {
+	margin-bottom: 10px;
 }

@@ -9,6 +9,9 @@ watchFile('template/index.kl', '/index');
 watchFile('website/index.css', '/index');
 watchFile('website/main.css', '/index');
 
+watchFile('template/file.kl', '/file');
+watchFile('website/file.css', '/file');
+
 watchFile('template/favourite.kl', '/favourite');
 watchFile('website/favourite.css', '/favourite');
 

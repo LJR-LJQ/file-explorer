@@ -45,6 +45,13 @@ html
 			li
 				a href=favourite | Favourite
 		
+		div class=`pagination dir-slide`
+			ul
+				li 
+					a href=# | «
+				li 
+					a href=# | »
+
 		div class=`dir-action-btn btn-group pull-left`
 			a href=# class=`btn btn-warning dropdown-toggle` data-toggle=dropdown
 				| System32 
@@ -117,19 +124,19 @@ html
 
 		ul class=`nav nav-tabs nav-stacked file-list`
 			li
-				a href=#
+				a href=file
 					| File
 					i class=`icon-chevron-right`
 			li
-				a href=#
+				a href=file
 					| File
 					i class=`icon-chevron-right`
 			li
-				a href=#
+				a href=file
 					| File
 					i class=`icon-chevron-right`
 			li
-				a href=#
+				a href=file
 					| File
 					i class=`icon-chevron-right`
 

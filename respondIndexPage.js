@@ -3,10 +3,11 @@ exports.respond = respond;
 var path = require('path');
 var respondPage = require('./respondPage').respondPage;
 var queryDir = require('./lib/queryDir').queryDir;
+var isWindows = require('./isWindows').isWindows;
 
 function respond(req, res) {
 	var reqUrl = require('url').parse(req.url, true);
-	console.log(reqUrl.query['path']);debugger;
+	console.log(reqUrl.query['path']);
 
 	var dirPathAbs = reqUrl.query['path'];
 
@@ -21,28 +22,68 @@ function respond(req, res) {
 		// [变量]
 		var dirDescList = [],
 			fileDescList = [],
+			pathDescList = [],
 			data;
 
 		// [过程]
-		// 整理数据格式
-		dirList = sort(dirList);
-		fileList = sort(fileList);
-
-		for (var i = 0, len = dirList.length; i < len; ++i) {
-			dirDescList.push(descIt(dirList[i]));
-		}
-
-		for (var i = 0, len = fileList.length; i < len; ++i) {
-			fileDescList.push(descIt(fileList[i]));
-		}
+		makePathDescList();
+		makeDirDescList();
+		makeFileDescList();
 
 		// 创建 Data 对象
-		data = new Data(dirDescList, fileDescList);
+		data = new Data(pathDescList, dirDescList, fileDescList);
 
 		// 根据模板生成页面内容返回
 		respondPage('index.kl', data, req, res);
 
 		// [函数]
+		function makePathDescList() {
+			var tmp = dirPathAbs;
+
+			while (true) {
+				if (path.basename(tmp)) {
+					pathDescList.unshift({
+						name: path.basename(tmp),
+						path: tmp
+					});
+					// 往上回退一层
+					tmp = path.dirname(tmp);
+				} else {
+					// 注意这里的处理在不同的系统下是不同的
+					if (isWindows()) {
+						// 剩下的是 C:\ 这样子的
+						// 但是 name 部分只要 C
+						// 而路径部分则要保持完整
+						pathDescList.unshift({
+							name: tmp[0],
+							path: tmp
+						})
+					} else {
+						// 对于非 windows 系统，剩下的是 /
+						// 不需要添加进列表，略过
+					}
+
+					// 终止循环
+					break;
+				}
+			}
+		}
+
+		function makeDirDescList() {
+			dirList = sort(dirList);
+			for (var i = 0, len = dirList.length; i < len; ++i) {
+				dirDescList.push(descIt(dirList[i]));
+			}
+		}
+
+		function makeFileDescList() {
+			fileList = sort(fileList);
+
+			for (var i = 0, len = fileList.length; i < len; ++i) {
+				fileDescList.push(descIt(fileList[i]));
+			}
+		}
+
 		function descIt(item) {
 			return {name: item, path: path.resolve(dirPathAbs, item)};
 		}
@@ -54,7 +95,8 @@ function respond(req, res) {
 	}
 }
 
-function Data(dirDescList, fileDescList) {
+function Data(pathDescList, dirDescList, fileDescList) {
+	this.pathDescList = pathDescList;
 	this.dirDescList = dirDescList;
 	this.fileDescList = fileDescList;
 	return this;
@@ -80,7 +122,7 @@ Data.prototype.produceDirList = function(parentNode, node) {
 	node.children = newChildren;
 }
 
-Data.prototype.produceFileList = function(parentNode, node) {debugger;
+Data.prototype.produceFileList = function(parentNode, node) {
 	var fileDescList = this.fileDescList,
 		newChildren = [];
 
@@ -98,6 +140,38 @@ Data.prototype.produceFileList = function(parentNode, node) {debugger;
 
 	// 把模板节点的内容替换掉
 	node.children = newChildren;
+}
+
+Data.prototype.producePath = function(parentNode, node) {
+	var pathDescList = this.pathDescList,
+		newChildren = [];
+
+	node.name = undefined;
+
+	for (var i = 0, len = pathDescList.length - 1; i < len; ++i) {
+		var copied = copy(node.children);
+		copied[0].children[0].text = pathDescList[i].name;
+		setAttr(copied[0].children[0], 'href', '?path=' + encodeURIComponent(pathDescList[i].path));
+		
+		while(copied.length > 0) {
+			newChildren.push(copied.shift());
+		}
+	}
+
+	node.children = newChildren;
+}
+
+Data.prototype.produceLastPath = function(parentNode, node) {
+	var pathDescList = this.pathDescList;
+
+	node.name = undefined;
+
+	if (pathDescList.length < 1) {
+		node.children = [];
+		return;
+	}
+
+	node.children[0].text = pathDescList[pathDescList.length-1].name;
 }
 
 function copy(e) {

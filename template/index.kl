@@ -87,15 +87,14 @@ html
 
 		ul class=`breadcrumb path-breadcrumb`
 			li
-				a href=# | Computer
+				a href=index | Computer
 				span class=divider | /
-			li
-				a href=# | C
-				span class=divider | /
-			li
-				a href=# | Windows
-				span class=divider | /
-			li class=active | System32
+			@producePath
+				li
+					a href=# |
+					span class=divider | /
+			@produceLastPath
+				li class=active |
 
 		ul class=`nav nav-tabs nav-stacked`
 			@produceDirList

@@ -37,17 +37,17 @@ html
 							li class=divider
 							li
 								a href=# 
+									i class=icon-star
+									|  Favourite
+							li class=divider
+							li
+								a href=# 
 									i class=icon-cog
 									|  Settings
 							li class=divider
 							li
 								a href=# | Sign out
 
-		div class=`nav nav-tabs index-nav-tabs`
-			li class=active
-				a href=# | Computer
-			li
-				a href=favourite | Favourite
 		
 		div class=`pagination dir-slide`
 			ul
@@ -58,13 +58,13 @@ html
 
 		div class=`dir-action-btn btn-group pull-left`
 			a href=# class=`btn btn-warning dropdown-toggle` data-toggle=dropdown
-				| System32 
+				| Operation 
 				span class=caret
 			ul class=dropdown-menu
 				li
 					a href=# 
 						i class=icon-star
-						|  Favourite
+						|  Add Favourite
 				li class=divider
 				li
 					a href=# 
@@ -96,37 +96,24 @@ html
 			@produceLastPath
 				li class=active |
 
-		ul class=`nav nav-tabs nav-stacked`
-			@produceDirList
-				li
-					a href=# | Dir1
-						i class=`icon-chevron-right`
+		@beforeProduceDirList
+			ul class=`nav nav-tabs nav-stacked dir-list`
+				@produceDirList
+					li
+						a href=#
+							i class=icon-folder-open
+							i class=`icon-chevron-right`
+							span class=entry-name | Dir1
 
-		div class=`pager pull-left dir-pagination`
-			li
-				a href=# | Previous
-			|  
-			li
-				a href=# | Next
 
-		a class=`btn btn-link pull-right` href=# | View all
-
-		div class=clearfix
-
-		ul class=`nav nav-tabs nav-stacked file-list`
-			@produceFileList
-				li
-					a href=file | File
-						i class=`icon-chevron-right`
-
-		div class=`pager pull-left dir-pagination`
-			li
-				a href=# | Previous
-			|  
-			li
-				a href=# | Next
-
-		a class=`btn btn-link pull-right` href=# | View all
+		@beforeProduceFileList
+			ul class=`nav nav-tabs nav-stacked file-list`
+				@produceFileList
+					li
+						a href=file
+							i class=icon-file
+							i class=`icon-chevron-right`
+							span class=entry-name | File
 
 		div class=clearfix
 

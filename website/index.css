@@ -19,3 +19,26 @@
 .path-breadcrumb {
 	margin-bottom: 10px;
 }
+
+.icon-folder-open, .icon-file {
+	position: absolute;
+	opacity: .1;
+}
+
+.nav-tabs > li {
+	position: relative;
+}
+
+.entry-name {
+	word-break: break-all;
+	display: inline-block;
+	margin-left: 1.5em;
+	margin-right: 1em;
+}
+
+.icon-chevron-right {
+	position: absolute;
+	right: 0;
+	margin: 0;
+	margin-right: 6px;
+}

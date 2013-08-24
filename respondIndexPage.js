@@ -12,7 +12,7 @@ function respond(req, res) {
 	var dirPathAbs = reqUrl.query['path'];
 
 	if (!dirPathAbs) {
-		dirPathAbs = 'c:/';
+		dirPathAbs = 'D:/';
 	}
 
 	// 构造数据
@@ -102,6 +102,20 @@ function Data(pathDescList, dirDescList, fileDescList) {
 	return this;
 }
 
+Data.prototype.beforeProduceDirList = function(parentNode, node) {
+	node.name = undefined;
+	if (!this.dirDescList || this.dirDescList.length < 1) {
+		node.children = [];
+	}
+}
+
+Data.prototype.beforeProduceFileList = function(parentNode, node) {
+	node.name = undefined;
+	if (!this.fileDescList || this.fileDescList.length < 1) {
+		node.children = [];
+	}
+}
+
 Data.prototype.produceDirList = function(parentNode, node) {
 	var dirDescList = this.dirDescList,
 		newChildren = [];
@@ -110,8 +124,10 @@ Data.prototype.produceDirList = function(parentNode, node) {
 
 	for (var i = 0, len = dirDescList.length; i < len; ++i) {
 		var copied = copy(node.children);
-		copied[0].children[0].text = dirDescList[i].name;
-		setAttr(copied[0].children[0], 'href', '?path=' + encodeURIComponent(dirDescList[i].path));
+		var a = copied[0].children[0];
+		var a_text = a.children[2];
+		a_text.text = dirDescList[i].name;
+		setAttr(a, 'href', '?path=' + encodeURIComponent(dirDescList[i].path));
 		
 		while(copied.length > 0) {
 			newChildren.push(copied.shift());
@@ -130,8 +146,10 @@ Data.prototype.produceFileList = function(parentNode, node) {
 
 	for (var i = 0, len = fileDescList.length; i < len; ++i) {
 		var copied = copy(node.children);
-		copied[0].children[0].text = fileDescList[i].name;
-		setAttr(copied[0].children[0], 'href', 'file?path=' + encodeURIComponent(fileDescList[i].path));
+		var a = copied[0].children[0];
+		var a_text = a.children[2];
+		a_text.text = fileDescList[i].name;
+		setAttr(a, 'href', 'file?path=' + encodeURIComponent(fileDescList[i].path));
 		
 		while(copied.length > 0) {
 			newChildren.push(copied.shift());

@@ -18,8 +18,8 @@
   margin-top: 0;
 }
 
-.file-list {
-  margin-top: 40px;
+.dir-list, .file-list {
+  margin-bottom: 40px;
 }
 
 .footer > p {

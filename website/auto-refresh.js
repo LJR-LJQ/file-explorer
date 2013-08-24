@@ -5,9 +5,11 @@ $(function() {
 	$(document).ajaxError(onAjaxError);
 
 	// 不断的请求，但是请求的最短间隔有限制
-	request(onRequestSuccess);
-	setInterval(function() {
+	setTimeout(function() {
 		request(onRequestSuccess);
+		setInterval(function() {
+			request(onRequestSuccess);
+		}, 500);
 	}, 500);
 
 	// # scb(tag)

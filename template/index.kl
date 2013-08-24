@@ -98,22 +98,10 @@ html
 			li class=active | System32
 
 		ul class=`nav nav-tabs nav-stacked`
-			li
-				a href=#
-					| Dir1
-					i class=`icon-chevron-right`
-			li
-				a href=#
-					| Dir1
-					i class=`icon-chevron-right`
-			li
-				a href=#
-					| Dir1
-					i class=`icon-chevron-right`
-			li
-				a href=#
-					| Dir1
-					i class=`icon-chevron-right`
+			@produceDirList
+				li
+					a href=# | Dir1
+						i class=`icon-chevron-right`
 
 		div class=`pager pull-left dir-pagination`
 			li
@@ -127,22 +115,10 @@ html
 		div class=clearfix
 
 		ul class=`nav nav-tabs nav-stacked file-list`
-			li
-				a href=file
-					| File
-					i class=`icon-chevron-right`
-			li
-				a href=file
-					| File
-					i class=`icon-chevron-right`
-			li
-				a href=file
-					| File
-					i class=`icon-chevron-right`
-			li
-				a href=file
-					| File
-					i class=`icon-chevron-right`
+			@produceFileList
+				li
+					a href=file | File
+						i class=`icon-chevron-right`
 
 		div class=`pager pull-left dir-pagination`
 			li

@@ -5,7 +5,7 @@ var url = require('url');
 var tags = {};
 var clientList = {};
 
-function respondTag(req, res) {debugger;
+function respondTag(req, res) {
 	console.log(req.url);
 	var reqUrl = url.parse(req.url, true);
 	

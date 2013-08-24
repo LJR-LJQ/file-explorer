@@ -30,6 +30,10 @@ html
 								a href=# 
 									i class=icon-inbox
 									|  Files on cloud
+							li
+								a href=# 
+									i class=icon-inbox
+									|  Computer
 							li class=divider
 							li
 								a href=# 

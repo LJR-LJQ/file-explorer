@@ -4,6 +4,7 @@ var path = require('path');
 var respondPage = require('./respondPage').respondPage;
 var queryDir = require('./lib/queryDir').queryDir;
 var isWindows = require('./isWindows').isWindows;
+var getLogicalDrives = require('./lib/getLogicalDrives').getLogicalDrives;
 
 function respond(req, res) {
 	var reqUrl = require('url').parse(req.url, true);
@@ -11,12 +12,40 @@ function respond(req, res) {
 
 	var dirPathAbs = reqUrl.query['path'];
 
-	if (!dirPathAbs) {
-		dirPathAbs = 'D:/';
+	if (dirPathAbs) {
+		queryDir(dirPathAbs, onQueryDirSuccess, notFound);
+	} else {
+		// 对于 Windows 系统来说，默认是列出磁盘驱动器列表
+		// 但是对于 Linux/Unix 等系统来说则是列出根目录
+		if (isWindows()) {
+			showLogicDrivers();
+		} else {
+			queryDir('/', onQueryDirSuccess, notFound);
+		}
 	}
 
-	// 构造数据
-	queryDir(dirPathAbs, onQueryDirSuccess, notFound);
+	// [函数]
+	function showLogicDrivers() {
+		getLogicalDrives(function(logicDriverList) {
+			var dirDescList = [],
+				fileDescList = [],
+				pathDescList = [],
+				data;
+				console.log(logicDriverList);
+			for (var i = 0, len = logicDriverList.length; i < len; ++i) {
+				dirDescList.push({
+					name: logicDriverList[i],
+					path: logicDriverList[i] + ':\\'
+				});
+			}
+
+			// 创建 Data 对象
+			data = new Data(pathDescList, dirDescList, fileDescList);
+
+			// 根据模板生成页面内容返回
+			respondPage('index.kl', data, req, res);
+		});
+	}
 
 	function onQueryDirSuccess(dirList, fileList) {
 		// [变量]

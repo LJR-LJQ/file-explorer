@@ -9,6 +9,9 @@ watchFile('template/index.kl', '/index');
 watchFile('website/index.css', '/index');
 watchFile('website/main.css', '/index');
 
+watchFile('template/dir-manage.kl', '/dir-manage');
+watchFile('website/dir-manage.css', '/dir-manage');
+
 watchFile('template/file.kl', '/file');
 watchFile('website/file.css', '/file');
 

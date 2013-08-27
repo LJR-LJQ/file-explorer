@@ -5,119 +5,60 @@ html
 		title | 喵德利
 		script src=wp-fix.js type=text/javascript
 		script src=jquery-1.10.2.min.js type=text/javascript
-		script src=auto-refresh.js type=text/javascript
 		link href=bootstrap/css/bootstrap.min.css rel=stylesheet media=screen
 		link href=main.css rel=stylesheet
 		link href=index.css rel=stylesheet
 		link href=bootstrap/css/bootstrap-responsive.min.css rel=stylesheet media=screen
 		script src=bootstrap/js/bootstrap.min.js type=text/javascript
+		script src=auto-refresh.js type=text/javascript
 
 	body
 		div class=`navbar navbar-inverse top-navbar`
 			div class=navbar-inner
-				a href=# class=brand | Miaodeli
+				a href=index class=brand | Miaodeli
 				ul class=`nav pull-right`
 					li class=dropdown
 						a href=# class=dropdown-toggle data-toggle=dropdown
-							| More
+							| Menu
 							b class=caret
 						ul class=dropdown-menu
 							li
 								a href=# 
-									i class=icon-user
-									|  My Account
+									|  Help
 							li
 								a href=# 
-									i class=icon-inbox
-									|  Files on cloud
-							li
-								a href=# 
-									i class=icon-inbox
-									|  Computer
-							li class=divider
-							li
-								a href=# 
-									i class=icon-star
-									|  Favourite
-							li class=divider
-							li
-								a href=# 
-									i class=icon-cog
-									|  Settings
-							li class=divider
-							li
-								a href=# | Sign out
+									|  About
 
-		
-		div class=`pagination dir-slide`
-			ul
-				li 
-					a href=# | «
-				li 
-					a href=# | »
+		div class=media
+			a class=pull-left href=# style=float:left
+				img class=media-object src=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAABN0lEQVR4Xu2YQQ6EIAxFdeXFODZnYu9qJk5C0sGiUiAx8FyKVPr76VPWEMJnmfhaEQAHsAXoARP3wIUmCAWgABSAAlBgYgXAIBgEg2AQDE4MAX6GwCAYBINgEAyCwYkVAIO1GPTe//nHOXfyU3xGG9PM1yNmzuRVDpCJ5ZKUyTwRoEfMqx3eTIBcJbdtW/Z9/w2XCtAqZncB5Atkkkc1NQFileVYFCi1fypcLqa1jzd1QM6+2va4EycKWRLTIkI3AY7FPKmmVmF5LxXvLmapCF0FiItp5QCZXClZulBAq/IVBtN9rvUAa8zSysfnqxxgfemb5iFA7Zfgm6ppWQsOwAEciXEkxpGYpXuOMgcKQAEoAAWgwCgd3ZIHFIACUAAKQAFL9xxlDhSAAlAACkCBUTq6JY/pKfAFwO6XkLwNdToAAAAASUVORK5CYII=
+			div class=media-body
+				h4
+					a href=fs | Browse Files »
+				| Access & Manage files on this device
 
-		div class=`dir-action-btn btn-group pull-left`
-			a href=# class=`btn btn-warning dropdown-toggle` data-toggle=dropdown
-				| Operation 
-				span class=caret
-			ul class=dropdown-menu
-				li
-					a href=# 
-						i class=icon-star
-						|  Add Favourite
-				li class=divider
-				li
-					a href=# 
-						i class=icon-search
-						|  Search
-				li class=divider
-				li
-					a href=# 
-						i class=icon-download-alt
-						|  Download
-				li
-					a href=# 
-						i class=icon-share
-						|  Send to ...
-				li class=divider
-				li
-					a href=# | Manage
+		hr
 
-		div class=clearfix
+		div class=media
+			a class=pull-left href=# style=float:left
+				img class=media-object src=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAABN0lEQVR4Xu2YQQ6EIAxFdeXFODZnYu9qJk5C0sGiUiAx8FyKVPr76VPWEMJnmfhaEQAHsAXoARP3wIUmCAWgABSAAlBgYgXAIBgEg2AQDE4MAX6GwCAYBINgEAyCwYkVAIO1GPTe//nHOXfyU3xGG9PM1yNmzuRVDpCJ5ZKUyTwRoEfMqx3eTIBcJbdtW/Z9/w2XCtAqZncB5Atkkkc1NQFileVYFCi1fypcLqa1jzd1QM6+2va4EycKWRLTIkI3AY7FPKmmVmF5LxXvLmapCF0FiItp5QCZXClZulBAq/IVBtN9rvUAa8zSysfnqxxgfemb5iFA7Zfgm6ppWQsOwAEciXEkxpGYpXuOMgcKQAEoAAWgwCgd3ZIHFIACUAAKQAFL9xxlDhSAAlAACkCBUTq6JY/pKfAFwO6XkLwNdToAAAAASUVORK5CYII=
+			div class=media-body
+				h4
+					a href=# | Remote Control »
+				| Screen capture, volume control and more
 
-		ul class=`breadcrumb path-breadcrumb`
-			li
-				a href=index | Computer
-				span class=divider | /
-			@producePath
-				li
-					a href=# |
-					span class=divider | /
-			@produceLastPath
-				li class=active |
+		hr
 
-		@beforeProduceDirList
-			ul class=`nav nav-tabs nav-stacked dir-list`
-				@produceDirList
-					li
-						a href=#
-							i class=icon-folder-open
-							i class=`icon-chevron-right`
-							span class=entry-name | Dir1
-
-
-		@beforeProduceFileList
-			ul class=`nav nav-tabs nav-stacked file-list`
-				@produceFileList
-					li
-						a href=file
-							i class=icon-file
-							i class=`icon-chevron-right`
-							span class=entry-name | File
-
-		div class=clearfix
+		div class=media
+			a class=pull-left href=# style=float:left
+				img class=media-object src=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAABN0lEQVR4Xu2YQQ6EIAxFdeXFODZnYu9qJk5C0sGiUiAx8FyKVPr76VPWEMJnmfhaEQAHsAXoARP3wIUmCAWgABSAAlBgYgXAIBgEg2AQDE4MAX6GwCAYBINgEAyCwYkVAIO1GPTe//nHOXfyU3xGG9PM1yNmzuRVDpCJ5ZKUyTwRoEfMqx3eTIBcJbdtW/Z9/w2XCtAqZncB5Atkkkc1NQFileVYFCi1fypcLqa1jzd1QM6+2va4EycKWRLTIkI3AY7FPKmmVmF5LxXvLmapCF0FiItp5QCZXClZulBAq/IVBtN9rvUAa8zSysfnqxxgfemb5iFA7Zfgm6ppWQsOwAEciXEkxpGYpXuOMgcKQAEoAAWgwCgd3ZIHFIACUAAKQAFL9xxlDhSAAlAACkCBUTq6JY/pKfAFwO6XkLwNdToAAAAASUVORK5CYII=
+			div class=media-body
+				h4
+					a href=# | World Connect »
+				| Discover & share the resource
 
 		hr class=footer-hr
 
 		div class=footer
-			p | © Miaodeli 2013
+			p | © Miaodeli 2013 
+				a href=# | About us

@@ -7,6 +7,17 @@
 	margin-bottom: 10px;
 }
 
+.nav-filter {
+}
+
+.nav-pills a {
+	color: black;
+}
+
+.nav-pills .active a {
+	background-color: #faa732;
+}
+
 .no-margin-hr {
   margin:5px 0;
 }
@@ -17,6 +28,7 @@
 }
 
 .path-breadcrumb {
+	margin-top: 10px;
 	margin-bottom: 10px;
 }
 

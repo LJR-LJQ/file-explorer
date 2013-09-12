@@ -1,4 +1,7 @@
 exports.respond = respond;
+exports.def = {
+	get: ['/favourite-edit-item']
+}
 
 var path = require('path')
 	fs = require('fs'),

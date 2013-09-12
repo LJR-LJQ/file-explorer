@@ -9,7 +9,7 @@ var fs = require('fs'),
 var serviceList = [];
 
 // [流程]
-var serviceDir = path.resolve(__dirname, 'service/');
+var serviceDir = path.resolve(__dirname, '../service/');
 loadServices(serviceDir);
 
 // [函数]

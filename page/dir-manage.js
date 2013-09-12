@@ -1,7 +1,10 @@
 exports.respond = respond;
+exports.def = {
+	get: ['/dir-manage']
+};
 
 var path = require('path');
-var respondPage = require('./respondPage').respondPage;
+var respondPage = require('./lib/respondPage').respondPage;
 
 function respond(req, res) {
 	var reqUrl = require('url').parse(req.url, true);

@@ -3,48 +3,84 @@ var http = require('http'),
 	fs = require('fs'),
 	format = require('util').format;
 
+var url = 'http://127.0.0.1/service';
 var tag = 0;
 
-watchFile('template/index.kl', '/index');
-watchFile('website/index.css', '/index');
-watchFile('website/main.css', '/index');
+var def = {
+	'/index': [
+		'template/index.kl',
+		'website/index.css',
+		'website/main.css'
+	]
+}
 
-watchFile('template/dir-manage.kl', '/dir-manage');
-watchFile('website/dir-manage.css', '/dir-manage');
-
-watchFile('template/file.kl', '/file');
-watchFile('website/file.css', '/file');
-
-watchFile('template/favourite.kl', '/favourite');
-watchFile('website/favourite.css', '/favourite');
-
-watchFile('template/favourite-edit.kl', '/favourite-edit');
-
-watchFile('template/favourite-edit-item.kl', '/favourite-edit-item');
+for (var pathname in def) {
+	var fileNameList = def[pathname];
+	if (Array.isArray(fileNameList)) {
+		fileNameList.forEach(function(fileName) {
+			watchFile(fileName, pathname);
+		});
+	}
+}
 
 function watchFile(filename, pathname) {
 	fs.watchFile(filename, {interval: 1000}, function(curr, prev) {
 		console.log('update to ' + tag);
-		updateTag(pathname, tag);
+		updateTag(pathname, String(tag));
 		tag += 1;
 	});
 }
 
-function updateTag(pathname, tag) {
-	var url = 'http://127.0.0.1/tag?action=set&pathname=%s&value=%s';
-	url = format(url, encodeURIComponent(pathname), encodeURIComponent(tag));
-	console.log(url + '\n');
-	var req = http.request(url, onRespond);
+function updateTag(pathname, value) {debugger;
+	rpc(url, 'Tag.set', {
+		pathname: pathname,
+		value: value
+	}, success, failure);
+
+	function success(result) {
+		console.log('update tag successfully');
+		console.log(result.value);
+		console.log('');
+	}
+
+	function failure(err) {
+		console.log('update tag failed');
+		console.log(JSON.stringify(err));
+		debugger;
+	}
+}
+
+// # scb(result)
+// # fcb(err)
+function rpc(url, funcName, args, scb, fcb) {
+	var text,
+		req;
+
+	if (!url || !funcName || !args) return;
+	text = JSON.stringify({
+		funcName: funcName,
+		args: args
+	});
+
+	req = http.request(url, onRespond);
 	req.on('error', onError);
-	req.end();
+	req.method = 'POST';
+	req.setHeader('Content-Type', 'application/json;charset=UTF-8');
+	req.setHeader('Content-Length', Buffer.byteLength(text));
+	req.end(text);
 
 	function onRespond(res) {
-		waitString(res, function(text) {
-			console.log('server respond:');
-			console.log(text);
+		waitJSON(res, function(obj) {
+			if (obj.error) {
+				if (fcb) {
+					fcb(obj);
+				}
+			} else if (scb) {
+				scb(obj);
+			}
 		});
 
-		function waitString(res, cb) {
+		function waitJSON(res, cb) {
 			var chunkList = [],
 				totalLength = 0;
 
@@ -58,17 +94,27 @@ function updateTag(pathname, tag) {
 			}
 
 			function onEnd() {
-				var bigBuffer = Buffer.concat(chunkList, totalLength);
-				cb(bigBuffer.toString('utf8'));
+				try {
+					var bigBuffer = Buffer.concat(chunkList, totalLength);
+					var text = bigBuffer.toString('utf8');
+					var obj = JSON.parse(text);
+					if (cb) {
+						cb(obj);
+					}
+				} catch(err) {
+					console.log('[waitJSON] ' + err.toString());
+				}
 			}
 
 			function onError(err) {
-				console.log('[waitString] ' + err.toString());
+				console.log('[waitJSON] ' + err.toString());
 			}
 		}
 	}
 
-	function onError(error) {
-		console.log('[updateTag] ' + error.toString());
+	function onError(err) {
+		if (fcb) {
+			fcb(err);
+		}
 	}
 }

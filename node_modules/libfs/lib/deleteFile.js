@@ -17,21 +17,19 @@ exports.deleteFile = deleteFile;
 function deleteFile(filePathAbs, scb, fcb) {
 
 	// 【过程】
-	try {
-		if(!fs.statSync(filePathAbs).isFile()) {
-			throw 'The path is not a file';
-		}
-	} catch(err) {
-		fcb(); // 文件不存在，权限问题，该路径不是有意义的文件；
-		return;
-	}
-
-	fs.unlink(filePathAbs, function (err) {
-		if (err) {
+	fs.stat(filePathAbs, function(err, stats){
+		if(err || !stats.isFile()) {
 			fcb();
 			return;
 		}
-		scb(filePathAbs);
-		return;
+
+		fs.unlink(filePathAbs, function (err) {
+			if (err) {
+				fcb();
+				return;
+			}
+			scb(filePathAbs);
+			return;
+		});
 	});
 }

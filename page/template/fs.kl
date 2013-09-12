@@ -50,12 +50,10 @@ html
 			li
 				a href=? | Computer
 				span class=divider | /
-			@producePath
-				li
-					a href=# |
-					span class=divider | /
-			@produceLastPath
-				li class=active |
+			li class=template-item
+				a href=# |
+				span class=divider | /
+			li class=`active template-item` |
 		
 		ul class=`nav nav-tabs nav-filter`
 			li class=active
@@ -68,24 +66,20 @@ html
 		div class=clearfix
 		
 
-		@beforeProduceDirList
-			ul class=`nav nav-tabs nav-stacked dir-list`
-				@produceDirList
-					li
-						a href=#
-							i class=icon-folder-open
-							i class=`icon-chevron-right`
-							span class=entry-name | Dir1
+		ul class=`nav nav-tabs nav-stacked dir-list`
+			li class=template-item
+				a href=#
+					i class=icon-folder-open
+					i class=`icon-chevron-right`
+					span class=entry-name | Dir1
 
 
-		@beforeProduceFileList
-			ul class=`nav nav-tabs nav-stacked file-list`
-				@produceFileList
-					li
-						a href=file
-							i class=icon-file
-							i class=`icon-chevron-right`
-							span class=entry-name | File
+		ul class=`nav nav-tabs nav-stacked file-list`
+			li class=template-item
+				a href=file
+					i class=icon-file
+					i class=`icon-chevron-right`
+					span class=entry-name | File
 
 		div class=clearfix
 

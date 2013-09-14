@@ -1,0 +1,23 @@
+body {
+	margin: 40px;
+}
+
+.test {
+	margin-bottom: 80px;
+}
+
+.log > div {
+	margin-bottom: 10px;
+}
+
+.log > .success {
+	color: #51a351;
+}
+
+.log > .failure {
+	color: #bd362f;
+}
+
+.btn {
+	min-width: 60px;
+}

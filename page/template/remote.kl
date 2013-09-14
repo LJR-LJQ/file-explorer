@@ -1,0 +1,42 @@
+html
+	head
+		meta http-equiv=Content-Type content=text/html;charset=UTF-8
+		meta name=viewport content=width=device-width,initial-scale=1.0
+		title | 喵德利
+		script src=common/wp-fix.js type=text/javascript
+		script src=common/jquery-1.10.2.min.js type=text/javascript
+		link href=bootstrap/css/bootstrap.min.css rel=stylesheet media=screen
+		link href=css/remote.css rel=stylesheet
+		link href=bootstrap/css/bootstrap-responsive.min.css rel=stylesheet media=screen
+		script src=bootstrap/js/bootstrap.min.js type=text/javascript
+		script src=common/request.js type=text/javascript
+		script src=common/auto-refresh.js type=text/javascript
+		script src=js/remote.js type=text/javascript
+	body
+		div class=row-fluid
+			div class=`test span3`
+				h4 | Step 1: create query
+				hr
+				input id=dirPathAbs type=text placeholder=dirPathAbs
+				br
+				a href=javascript:createQuery(); class=`btn btn-primary` | Create Query
+			div class=`test span3`
+				h4 | Step 2: wrap
+				hr
+				input id=target type=text placeholder=target
+				br
+				a href=javascript:wrap(); class=`btn btn-primary` | wrap
+			div class=`test span3`
+				h4 | Step 3: deliver & query
+				hr
+				a href=javascript:deliver(); class=`btn btn-primary` | deliver
+				br
+				br
+				input id=ticket-id type=text placeholder=`ticket id`
+				br
+				a href=javascript:query(); class=`btn btn-primary` | query
+		div class=test
+			h4 | Log
+			hr
+			div id=log class=log
+

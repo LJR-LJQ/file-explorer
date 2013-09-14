@@ -59,7 +59,7 @@ function set(args, callback) {
 
 	oldValue = getValue(pathname);
 	if (oldValue !== value) {
-		setValue(pathname, value);debugger;
+		setValue(pathname, value);
 		// 通知队列里的客户端 tag 值已经发生了变化
 		releaseClients(pathname);
 	}

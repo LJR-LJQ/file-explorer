@@ -64,7 +64,7 @@ function loadPages(app) {
 		}
 
 		console.log('setup page: ' + pageFileName);
-		debugger;
+		
 		for (var method in pageObj.def) {
 			var urlList = pageObj.def[method];
 			if (!Array.isArray(urlList)) continue;

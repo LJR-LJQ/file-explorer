@@ -8,9 +8,14 @@ var tag = 0;
 
 var def = {
 	'/index': [
-		'template/index.kl',
+		'page/template/index.kl',
 		'website/index.css',
 		'website/main.css'
+	],
+	'/remote': [
+		'page/template/remote.kl',
+		'website/css/remote.css',
+		'website/js/remote.js'
 	]
 }
 
@@ -31,7 +36,7 @@ function watchFile(filename, pathname) {
 	});
 }
 
-function updateTag(pathname, value) {debugger;
+function updateTag(pathname, value) {
 	rpc(url, 'Tag.set', {
 		pathname: pathname,
 		value: value
@@ -46,7 +51,6 @@ function updateTag(pathname, value) {debugger;
 	function failure(err) {
 		console.log('update tag failed');
 		console.log(JSON.stringify(err));
-		debugger;
 	}
 }
 

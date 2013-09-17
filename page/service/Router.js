@@ -1,6 +1,7 @@
 exports.serviceName = 'Router';
 exports.deliver = deliver;
 exports.query = query;
+exports.receive = receive;
 
 var IdTable = require('./lib/id-table'),
 	KeyTable = require('./lib/key-table'),
@@ -17,122 +18,149 @@ var routeTable = KeyTable.create();
 initRouteTable();
 
 function deliver(args, callback) {
-	// 如果 target 没有给出，那么就认为是本机
-	// 否则按照路由表进行投递
+	var deliverReq,
+		target,
+		content;
 
-	deliverByTarget(args, callback);
+	deliverReq = args;
+	target = args.target;
+	content = args.content;
 
-	function deliverByTarget(deliverReq, callback) {
-		var target;
+	if (!checkTarget() || !checkContent()) return;
 
-		// target 可以省略，为 null、undefined
-		// 如果给出，则必须为字符串类型
-		target = args.target;
-		target = target === undefined ? '' : target;
-		target = target === null ? '' : target;
+	// 创建投递任务
+	var deliveryTask = {
+		result: {},
+		meta: {
+			id: undefined,
+			target: target,
+			local: isLocalTarget(target),
+			finish: false,
+			delivered: false,
+			deliverResult: undefined,
+			receiving: false
+		}
+	};
 
-		if (typeof target !== 'string') {
-			callback({error: 'target must be string'});
+	// 存入投递任务表，分配 id
+	var id = deliveryTaskTable.add(deliveryTask);
+	deliveryTask.meta.id = id;
+
+	// 返回基本信息给客户端
+	callback(deliveryTask.meta);
+
+	// 本地任务和远程任务分开处理
+	if (deliveryTask.meta.local) {
+		// 本地投递直接转交给对应的服务处理即可
+		serviceManager.dispatch(deliverReq.content, localDeliverCallback);
+	} else {
+		// 远程投递流程稍微复杂一些
+		// 首先根据路由表进行查询
+		var targetUrl = routeTable.get(target);
+		if (!targetUrl) {
+			// 查不到对应的目标
+			// 任务结束，且投递未完成
+			deliveryTask.meta.finish = true;
+			deliveryTask.meta.delivered = false;
 			return;
 		}
 
-		if (isLocalTarget(target)) {
-			localDelivery();
-		} else {
-			remoteDelivery();
-		}
-
-		function localDelivery() {
-			if (!checkContent()) return;
-
-			// 创建投递任务
-			var deliveryTask = {
-				type: 'local',
-				status: 'start',
-				result: undefined,
-				error: undefined
-			};
-
-			// 加入投递表获得 id
-			var id = deliveryTaskTable.add(deliveryTask);
-
-			// 将 id 返回给客户端
-			callback({id: id});
-
-			// 执行实际的投递过程
-			serviceManager.dispatch(deliverReq.content, deliverCallback);
-
-			function deliverCallback(result) {
-				deliveryTask.status = 'stop';
-
-				// 成功和失败分开处理
-				if (result.error) {
-					deliveryTask.error = result.error;
-				} else {
-					deliveryTask.result = result;
-				}
-			}
-		}
-
-		function remoteDelivery() {
-			if (!checkContent()) return;
-
-			var target,
-				targetUrl;
-
-			target = deliverReq.target;
-
-			// 创建投递任务
-			var deliveryTask = {
-				type: 'remote',
-				status: 'start',
-				result: undefined,
-				error: undefined,
-				target: target,		// 记录下 target
-				querying: false		// 当前是否处于查询状态，用于防止查询重入
-			};
-
-			// 加入投递表获得 id
-			var id = deliveryTaskTable.add(deliveryTask);
-
-			// 将 id 返回给客户端
-			callback({id: id});
-
-			// 执行实际的投递过程
-
-			// 根据路由表进行查询
-			var targetUrl = routeTable.get(target);
-			if (!targetUrl) {
-				deliveryTask.status = 'stop';
-				deliveryTask.error = 'unknown target';
-				return;
-			}
-
-			// 以 rpc 方式进行远程调用
-			rpc(targetUrl, 'Router.deliver', req, success, failure);
-
-			function success(result) {
-				deliveryTask.status = 'stop';
-				deliveryTask.result = result;
-			}
-
-			function failure(err) {
-				deliveryTask.status = 'stop';
-				deliveryTask.error = err.error;
-			}
-		}
-
-		function checkContent() {
-			content = deliverReq.content;
-			if (!content) {
-				callback({error: 'empty content'});
-				return false;
-			} else {
-				return true;
-			}
-		}
-
+		// 以 rpc 方式进行远程调用
+		rpc(targetUrl, 'Router.deliver', req, remoteDeliverSuccess, remoteDeliverFailure);
 	}
+
+	function localDeliverCallback(result) {
+		// 任务结束，投递成功
+		deliveryTask.meta.finish = true;
+		deliveryTask.meta.delivered = true;
+		deliveryTask.meta.result = undefined;	// 注意本地投递是没有投递结果的
+
+		// 注意这里收到的是任务处理的总结果
+		deliveryTask.result = result;
+	}
+
+	function remoteDeliverSuccess(result) {
+		// 任务结束，投递成功
+		// 将投递结果记录下来
+		deliveryTask.meta.finish = true;
+		deliveryTask.meta.delivered = true;
+		deliveryTask.meta.deliverResult = result;
+	}
+
+	function remoteDeliverFailure(err) {
+		// 任务结束，投递失败
+		// 将投递错误信息记录下来
+		deliveryTask.meta.finish = true;
+		deliveryTask.meta.delivered = false;
+		deliveryTask.meta.deliverResult = err;
+	}
+
+	function checkTarget() {
+		// target 不能省略，而且必须为字符串
+		if (typeof target !== 'string') {
+			callback({error: 'target must be string'});
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	function checkContent() {
+		if (!content) {
+			callback({error: 'empty content'});
+			return false;
+		} else {
+			return true;
+		}
+	}
+}
+
+function receive(args, callback) {
+	var id,
+		deliveryTask;
+
+	id = args.id;
+	if (!id) {
+		callback({error: 'id is missing'});
+		return;
+	}
+
+	deliveryTask = deliveryTaskTable.get(id);
+	if (!deliveryTask) {
+		callback({error: 'deliveryTask not found, id=' + id});
+		return;
+	}
+
+	// 直接返回 deliveryTask.result 即可
+	callback(deliveryTask.result);
+
+	// 激活一次接收过程
+	startReceive();
+
+
+	function startReceive() {
+		var targetUrl;
+
+		// 如果是远程请求类型，而且投递已经成功完成
+		// 同时没有正在接收，那么发起一个新的接收过程
+		if (deliveryTask.meta.local) return;
+		if (!deliveryTask.meta.finish || !deliveryTask.meta.delivered) return;
+		if (deliveryTask.meta.receiving) return;
+
+		console.log('start receiving');
+
+		// 标记为正在接收，防止重入
+		deliveryTask.meta.receiving = true;
+
+		// 通过路由表查询地址
+		targetUrl = routeTable.get(deliveryTask.meta.target);
+		if (!targetUrl) {
+			deliveryTask.meta.receiving = false;
+			console.log('targetUrl is unknown, return. target=' + deliveryTask.meta.target);
+			return;
+		}
+
+	}	
 }
 
 function query(args, callback) {
@@ -151,77 +179,46 @@ function query(args, callback) {
 		return;
 	}
 
-	// 直接返回当前任务状态的摘要信息
-	callback(summary(id, deliveryTask));
+	// 直接返回当前任务状态的元信息
+	callback(deliveryTask.meta);
+}
 
-	// 激活一下远程查询功能
-	remoteQuery();
+function remoteQuery() {
+	var targetUrl;
 
-	function remoteQuery() {
-		var targetUrl;
+	console.log('remoteQuery...');
 
-		console.log('remoteQuery...');
+	// 只有当投递任务属于远程类型，而且已经完成之后才会发起查询
+	// 否则不做任何操作
 
-		// 只有当投递任务属于远程类型，而且已经完成之后才会发起查询
-		// 否则不做任何操作
-		if (deliveryTask.type !== 'remote') {
-			console.log('not remote type, return');
-			return;
-		}
-
-		if (deliveryTask.status !== 'stop') {
-			console.log('not stop status, return');
-			return;
-		}
-
-		// 为了防止重入，如果当前已经在查询状态，则什么也不做
-		if (deliveryTask.querying) {
-			console.log('querying already, return');
-			return;
-		}
-
-		// 进入查询状态
-		deliveryTask.querying = true;
-
-		// 首先重新获取 targetUrl
-		// 如果获取不到，那就不再继续向下执行
-		targetUrl = routeTable.get(id);
-		if (!targetUrl) {
-			deliveryTask.querying = false;
-			console.log('targetUrl is unknown, return');
-			return;
-		}
-
-		console.log('targetUrl=' + targetUrl);
-		console.log('sending query...');
-
-		// 向远端发送查询请求
-		rpc(targetUrl, 'Router.query', {id: id}, success, failure);
-
-		function success(result) {
-			deliveryTask.querying = false;
-			console.log('query success');
-
-			// 清空当前的一些状态属性，装入新的结果
-			deliveryTask.status = result.status;
-			deliveryTask.result = result.result;
-			deliveryTask.error = result.error;
-		}
-
-		function failure(err) {
-			deliveryTask.querying = false;
-			console.log('quer failed');
-		}
+	// 首先重新获取 targetUrl
+	// 如果获取不到，那就不再继续向下执行
+	targetUrl = routeTable.get(id);
+	if (!targetUrl) {
+		deliveryTask.querying = false;
+		console.log('targetUrl is unknown, return');
+		return;
 	}
 
-	function summary(id, deliveryTask) {
-		var o = {
-			id: id,
-			status: deliveryTask.status,
-			error: deliveryTask.error,
-			result: deliveryTask.result
-		};
-		return o;
+	console.log('targetUrl=' + targetUrl);
+	console.log('sending query...');
+
+	// 向远端发送查询请求
+	rpc(targetUrl, 'Router.query', {id: id}, success, failure);
+
+	function success(result) {
+		deliveryTask.querying = false;
+		console.log('query success');
+
+		// 清空当前的一些状态属性，装入新的结果
+		deliveryTask.status = result.status;
+		deliveryTask.result = result.result;
+		deliveryTask.error = result.error;
+	}
+
+	function failure(err) {
+		deliveryTask.querying = false;
+		console.log('quer failed');
 	}
 }
 

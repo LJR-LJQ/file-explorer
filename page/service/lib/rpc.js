@@ -5,7 +5,7 @@ var http = require('http');
 
 // # scb(result)
 // # fcb(err)
-function rpc(url, funcName, args, scb, fcb) {debugger;
+function rpc(url, funcName, args, scb, fcb) {
 	var text,
 		req;
 
@@ -22,18 +22,16 @@ function rpc(url, funcName, args, scb, fcb) {debugger;
 	req.setHeader('Content-Length', Buffer.byteLength(text));
 	req.end(text);
 
-	function onRespond(res) {debugger;
+	function onRespond(res) {
 		waitJSON(res, function(obj) {
-			if (obj.error) {
-				if (fcb) {
-					fcb(obj);
-				}
-			} else if (scb) {
+			if (scb) {
 				scb(obj);
 			}
-		});
+		}, fcb);
 
-		function waitJSON(res, cb) {
+		// # scb(obj)
+		// # fcb(err)
+		function waitJSON(res, scb, fcb) {
 			var chunkList = [],
 				totalLength = 0;
 
@@ -46,28 +44,34 @@ function rpc(url, funcName, args, scb, fcb) {debugger;
 				totalLength += chunk.length;
 			}
 
-			function onEnd() {debugger;
+			function onEnd() {
 				try {
 					var bigBuffer = Buffer.concat(chunkList, totalLength);
 					var text = bigBuffer.toString('utf8');
 					var obj = JSON.parse(text);
-					if (cb) {
-						cb(obj);
+					if (scb) {
+						scb(obj);
 					}
 				} catch(err) {
 					console.log('[waitJSON] ' + err.toString());
+					if (fcb) {
+						fcb({error: err.toString()});
+					}
 				}
 			}
 
 			function onError(err) {
 				console.log('[waitJSON] ' + err.toString());
+				if (fcb) {
+					fcb({error: err.toString()});
+				}
 			}
 		}
 	}
 
-	function onError(err) {debugger;
+	function onError(err) {
 		if (fcb) {
-			fcb(err);
+			fcb({error: err.toString()});
 		}
 	}
 }

@@ -13,7 +13,15 @@ function cancelLogin() {
 }
 
 function logout() {
-	transitionBetween('#file-explorer-container', '#login-container');
+	transitionBetween('#file-explorer-container', '#logout-container');
+}
+
+function logoutSuccess() {
+	transitionBetween('#logout-container', '#login-container');
+}
+
+function config() {
+	transitionBetween('#file-explorer-center-container', '#config-container');
 }
 
 function transitionBetween(fromSelector, toSelector, scb) {

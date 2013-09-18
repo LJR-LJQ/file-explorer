@@ -13,6 +13,18 @@ html
 		link href=css/index.css rel=stylesheet media=screen
 		link href=css/index-animation.css rel=stylesheet media=screen
 	body
+		div id=`file-modal` class=`modal fade`
+			div class=modal-dialog
+				div class=modal-content
+					div class=modal-header
+						button type=button class=close data-dismiss=modal aria-hidden=true | &times;
+						h4 class=modal-title | 文件信息
+					div class=modal-body
+
+					div class=modal-footer
+						button type=button class=`btn btn-default` data-dismiss=modal | 关闭
+						button type=button class=`btn btn-primary` | 保存
+
 		div class=main-container
 			div id=login-container class=`login animation-container anim-hide none`
 				div class=notice
@@ -25,9 +37,15 @@ html
 			
 			div id=login-progress-container class=`login animation-container anim-hide none`
 				div class=notice
-					h2 | 验证身份...
+					h2 | 登录中
 					h4 | 正在验证您的身份，请稍候
 				button onclick=cancelLogin(); class=`btn btn-primary btn-lg` | 取消
+
+			div id=logout-container class=`login animation-container anim-hide none`
+				div class=notice
+					h2 | 已退出
+					h4 | 您已安全的退出了系统
+				button onclick=logoutSuccess(); class=`btn btn-primary btn-lg` | 确定
 
 			div id=file-explorer-container class=`animation-container`
 				nav id=main-nav class=`navbar navbar-default navbar-static-top` role=navigation
@@ -38,11 +56,54 @@ html
 						|  
 						| 退出
 					p class=`navbar-text pull-right`
-						a href=# 
+						a href=javascript:config(); 
 							span class=`glyphicon glyphicon-wrench`
 							|  
 							| 选项设置
-				div class=file-explorer-center-container
+				div id=config-container class=`animation-container`
+					div class=`config-block config-remote-access`
+						h4 class=config-block-title | 互联网接入
+						hr
+						div class=content
+							div class=`alert alert-info`
+								strong | 提示：
+								| 启用互联网接入功能后，您就可以借助喵德利网络，通过手机或其他设备机远程访问这台计算机了
+							div class=radio
+								label
+									input type=radio name=optionsRadios id=enableRemoteAccess value=option1 checked
+									| 启用互联网接入功能，允许远程访问本计算机
+							div class=radio
+								label
+									input type=radio name=optionsRadios id=disableRemoteAccess val=option2
+									| 禁用互联网接入功能
+							button type=button class=`btn btn-primary` | 保存
+					div class=`config-block config-passwd`
+						h4 class=config-block-title | 修改密码
+						hr
+						form class=form-horizontal role=form
+							div class=form-group
+								label for=current-pwd class=`col-lg-3 control-label` | 当前密码
+								div class=col-lg-8
+									input type=password class=form-control id=current-pwd
+							div class=form-group
+								label for=new-pwd class=`col-lg-3 control-label` | 新密码
+								div class=col-lg-8
+									input type=password class=form-control id=new-pwd
+							div class=form-group
+								label for=repeat-new-pwd class=`col-lg-3 control-label` | 重复输入
+								div class=col-lg-8
+									input type=password class=form-control id=repeat-new-pwd
+							div class=form-group
+								div class=`col-lg-offset-3 col-lg-8`
+									div class=checkbox
+										label
+											input type=checkbox
+											| 显示密码
+							div class=form-group
+								div class=`col-lg-offset-3 col-lg-8`
+									button type=submit class=`btn btn-primary` | 修改密码
+
+				div id=file-explorer-center-container class=`animation-container anim-hide none`
 					div class=column
 						h2 class=title | 位置
 						ul class=position-list
@@ -436,7 +497,7 @@ html
 							li
 								span
 									div | 0123
-								a href=# | 0409
+								a href=#file-modal data-toggle=modal | 0409
 							li
 								span
 									div | 0123

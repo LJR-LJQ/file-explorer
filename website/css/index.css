@@ -7,6 +7,10 @@ h1,h2,h3,h4,h5,h6 {
 	font-family: 'Microsoft Yahei';
 }
 
+.modal-dialog {
+	padding-top: 120px;
+}
+
 .none {
 	display: none;
 }
@@ -53,7 +57,7 @@ h1,h2,h3,h4,h5,h6 {
 	font-size: 50px;
 }
 
-.file-explorer-center-container {
+#file-explorer-center-container {
 	max-width: 710px;
 	margin: 0 auto;
 }
@@ -71,7 +75,7 @@ ul.item-list > li,  ul.position-list > li{
 
 ul > li:hover {
 	/*background-color: rgb(215, 255, 247);*/
-	color: #888;
+	color: rgb(0, 110, 153);
 }
 
 ul.item-list > li > span {
@@ -123,4 +127,37 @@ ul.position-list > li {
 ul.position-list li.current {
 	color: white;
 	background-color: rgb(0, 110, 153);
+}
+
+.config-block {
+	max-width: 500px;
+	margin: 0 auto;
+	background-color: #fff;
+	border-radius: 4px;
+	/* border: 1px solid #ddd; */
+	margin-top: 45px;
+}
+
+.config-block hr {
+	margin: 30px 0;
+}
+
+.config-block-title {
+	text-align: center;
+}
+
+.config-block .content {
+	padding: 0 15px;
+}
+
+.config-block button {
+	width: 100%;
+}
+
+.config-remote-access button {
+	margin-top: 20px;
+}
+
+.config-passwd {
+	margin-top: 80px;
 }

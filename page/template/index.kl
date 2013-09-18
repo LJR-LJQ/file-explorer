@@ -61,6 +61,8 @@ html
 							|  
 							| 选项设置
 				div id=config-container class=`animation-container`
+					div class=`config-block goback`
+						a href=javascript:backFromConfig(); | ‹ 返回文件浏览
 					div class=`config-block config-remote-access`
 						h4 class=config-block-title | 互联网接入
 						hr
@@ -80,28 +82,19 @@ html
 					div class=`config-block config-passwd`
 						h4 class=config-block-title | 修改密码
 						hr
-						form class=form-horizontal role=form
-							div class=form-group
-								label for=current-pwd class=`col-lg-3 control-label` | 当前密码
-								div class=col-lg-8
-									input type=password class=form-control id=current-pwd
-							div class=form-group
-								label for=new-pwd class=`col-lg-3 control-label` | 新密码
-								div class=col-lg-8
-									input type=password class=form-control id=new-pwd
-							div class=form-group
-								label for=repeat-new-pwd class=`col-lg-3 control-label` | 重复输入
-								div class=col-lg-8
-									input type=password class=form-control id=repeat-new-pwd
-							div class=form-group
-								div class=`col-lg-offset-3 col-lg-8`
-									div class=checkbox
-										label
-											input type=checkbox
-											| 显示密码
-							div class=form-group
-								div class=`col-lg-offset-3 col-lg-8`
-									button type=submit class=`btn btn-primary` | 修改密码
+						div class=content
+							div class=input-group
+								span class=input-group-addon | 旧密码
+								input type=password class=form-control
+							div class=input-group
+								span class=input-group-addon | 新密码
+								input type=password class=form-control
+							div class=`checkbox pull-right`
+								label
+									input type=checkbox value=
+									| 显示密码
+							button type=button class=`btn btn-primary` | 保存
+
 
 				div id=file-explorer-center-container class=`animation-container anim-hide none`
 					div class=column

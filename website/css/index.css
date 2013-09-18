@@ -154,10 +154,24 @@ ul.position-list li.current {
 	width: 100%;
 }
 
+.config-block.goback {
+	margin-top: 0;
+}
+
 .config-remote-access button {
 	margin-top: 20px;
 }
 
 .config-passwd {
 	margin-top: 80px;
+	margin-bottom: 200px;
+}
+
+.config-passwd .input-group {
+	margin-bottom: 15px;
+}
+
+.config-passwd .checkbox {
+	margin-top: 0;
+	margin-bottom: 20px;
 }

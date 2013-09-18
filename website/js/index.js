@@ -24,6 +24,10 @@ function config() {
 	transitionBetween('#file-explorer-center-container', '#config-container');
 }
 
+function backFromConfig() {
+	transitionBetween('#config-container', '#file-explorer-center-container');
+}
+
 function transitionBetween(fromSelector, toSelector, scb) {
 	hideUI(fromSelector, function() {
 		showUI(toSelector, scb);

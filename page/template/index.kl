@@ -14,28 +14,16 @@ html
 		link href=css/index-animation.css rel=stylesheet media=screen
 	body
 		nav class=`navbar navbar-default navbar-static-top` role=navigation
-			div class=navbar-header
-				button type=button class=navbar-toggle data-toggle=collapse data-target=.navbar-ex1-collapse
-					span class=sr-only | 切换导航栏
-					span class=icon-bar
-					span class=icon-bar
-					span class=icon-bar
-				a href=# class=navbar-brand | 喵德利
-			div class=`collapse navbar-collapse navbar-ex1-collapse`
-				ul class=`nav navbar-nav`
-					li class=active
-						a href=# 
-							span class=`glyphicon glyphicon-home`
-							|  
-							| 文件浏览
-					li
-						a href=# 
-							span class=`glyphicon glyphicon-wrench`
-							|  
-							| 选项设置
-				button type=button class=`btn btn-info navbar-btn pull-right` 
-					span class=`glyphicon glyphicon-log-out`
-					|  退出
+			a href=# class=navbar-brand | 喵德利
+			button type=button class=`btn btn-info navbar-btn navbar-right` style=`margin-right:15px;`
+				span class=`glyphicon glyphicon-log-out`
+				|  
+				| 退出
+			p class=`navbar-text pull-right`
+				a href=# 
+					span class=`glyphicon glyphicon-wrench`
+					|  
+					| 选项设置
 		div class=main-container
 			div id=login-container class=`login animation-container anim-hide none`
 				div class=notice

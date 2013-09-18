@@ -2,64 +2,74 @@ html
 	head
 		meta http-equiv=Content-Type content=text/html;charset=UTF-8
 		meta name=viewport content=width=device-width,initial-scale=1.0
-		title | 喵德利
+		title | 喵德利-远程连接
 		script src=common/wp-fix.js type=text/javascript
 		script src=common/jquery-1.10.2.min.js type=text/javascript
-		script src=common/request.js type=text/javascript
 		link href=bootstrap/css/bootstrap.min.css rel=stylesheet media=screen
-		link href=main.css rel=stylesheet
-		link href=index.css rel=stylesheet
-		link href=bootstrap/css/bootstrap-responsive.min.css rel=stylesheet media=screen
 		script src=bootstrap/js/bootstrap.min.js type=text/javascript
+		script src=common/request.js type=text/javascript
 		script src=common/auto-refresh.js type=text/javascript
-
+		script src=js/index.js type=text/javascript
+		link href=css/index.css rel=stylesheet media=screen
+		link href=css/index-animation.css rel=stylesheet media=screen
 	body
-		div class=`navbar navbar-inverse top-navbar`
-			div class=navbar-inner
-				a href=index class=brand | Miaodeli
-				ul class=`nav pull-right`
-					li class=dropdown
-						a href=# class=dropdown-toggle data-toggle=dropdown
-							| Menu
-							b class=caret
-						ul class=dropdown-menu
-							li
-								a href=# 
-									|  Help
-							li
-								a href=# 
-									|  About
+		div class=main-container
+			div id=login-container class=`login animation-container anim-hide none`
+				div class=notice
+					h2 | 登录计算机
+					h4 | 请输入密码以获得本计算机的访问权
+				div class=`input-group input-group-lg`
+					span class=input-group-addon | 密码
+					input type=password class=form-control
+				button onclick=login(); class=`btn btn-primary btn-lg` | 登录
+			
+			div id=login-progress-container class=`login animation-container anim-hide none`
+				div class=notice
+					h2 | 登录中
+					h4 | 正在验证您的身份，请稍候
+				button onclick=cancelLogin(); class=`btn btn-primary btn-lg` | 取消
 
-		div class=media
-			a class=pull-left href=# style=float:left
-				img class=media-object src=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAABN0lEQVR4Xu2YQQ6EIAxFdeXFODZnYu9qJk5C0sGiUiAx8FyKVPr76VPWEMJnmfhaEQAHsAXoARP3wIUmCAWgABSAAlBgYgXAIBgEg2AQDE4MAX6GwCAYBINgEAyCwYkVAIO1GPTe//nHOXfyU3xGG9PM1yNmzuRVDpCJ5ZKUyTwRoEfMqx3eTIBcJbdtW/Z9/w2XCtAqZncB5Atkkkc1NQFileVYFCi1fypcLqa1jzd1QM6+2va4EycKWRLTIkI3AY7FPKmmVmF5LxXvLmapCF0FiItp5QCZXClZulBAq/IVBtN9rvUAa8zSysfnqxxgfemb5iFA7Zfgm6ppWQsOwAEciXEkxpGYpXuOMgcKQAEoAAWgwCgd3ZIHFIACUAAKQAFL9xxlDhSAAlAACkCBUTq6JY/pKfAFwO6XkLwNdToAAAAASUVORK5CYII=
-			div class=media-body
-				h4
-					a href=fs | Browse Files »
-				| Access & Manage files on this device
+			div id=file-explorer-container class=`animation-container`
+				div class=file-explorer
+					div class=file-explorer-header
+						h4 | 文件浏览器
+					ol class=breadcrumb
+						li
+							a href=# | C
+						li
+							a href=# | Windows
+						li class=active | System32
+					div class=file-explorer-body
+						table
+							thead
+								tr
+									th class=left-column | 目录
+									th class=right-column | 文件
+							tbody
+								tr
+									td class=left-column
+										| 目录名
+									td class=right-column
+										| 文件名
+								tr
+									td class=left-column
+										| 目录名
+									td class=right-column
+										| 文件名
+								tr
+									td class=left-column
+										| 目录名
+									td class=right-column
+										| 文件名
+								tr
+									td class=left-column
+										| 目录名
+									td class=right-column
+										| 文件名
+								tr
+									td class=left-column
+										| 目录名
+									td class=right-column
+										| 文件名
 
-		hr
 
-		div class=media
-			a class=pull-left href=# style=float:left
-				img class=media-object src=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAABN0lEQVR4Xu2YQQ6EIAxFdeXFODZnYu9qJk5C0sGiUiAx8FyKVPr76VPWEMJnmfhaEQAHsAXoARP3wIUmCAWgABSAAlBgYgXAIBgEg2AQDE4MAX6GwCAYBINgEAyCwYkVAIO1GPTe//nHOXfyU3xGG9PM1yNmzuRVDpCJ5ZKUyTwRoEfMqx3eTIBcJbdtW/Z9/w2XCtAqZncB5Atkkkc1NQFileVYFCi1fypcLqa1jzd1QM6+2va4EycKWRLTIkI3AY7FPKmmVmF5LxXvLmapCF0FiItp5QCZXClZulBAq/IVBtN9rvUAa8zSysfnqxxgfemb5iFA7Zfgm6ppWQsOwAEciXEkxpGYpXuOMgcKQAEoAAWgwCgd3ZIHFIACUAAKQAFL9xxlDhSAAlAACkCBUTq6JY/pKfAFwO6XkLwNdToAAAAASUVORK5CYII=
-			div class=media-body
-				h4
-					a href=# | Remote Control »
-				| Screen capture, volume control and more
-
-		hr
-
-		div class=media
-			a class=pull-left href=# style=float:left
-				img class=media-object src=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAABN0lEQVR4Xu2YQQ6EIAxFdeXFODZnYu9qJk5C0sGiUiAx8FyKVPr76VPWEMJnmfhaEQAHsAXoARP3wIUmCAWgABSAAlBgYgXAIBgEg2AQDE4MAX6GwCAYBINgEAyCwYkVAIO1GPTe//nHOXfyU3xGG9PM1yNmzuRVDpCJ5ZKUyTwRoEfMqx3eTIBcJbdtW/Z9/w2XCtAqZncB5Atkkkc1NQFileVYFCi1fypcLqa1jzd1QM6+2va4EycKWRLTIkI3AY7FPKmmVmF5LxXvLmapCF0FiItp5QCZXClZulBAq/IVBtN9rvUAa8zSysfnqxxgfemb5iFA7Zfgm6ppWQsOwAEciXEkxpGYpXuOMgcKQAEoAAWgwCgd3ZIHFIACUAAKQAFL9xxlDhSAAlAACkCBUTq6JY/pKfAFwO6XkLwNdToAAAAASUVORK5CYII=
-			div class=media-body
-				h4
-					a href=# | World Connect »
-				| Discover & share the resource
-
-		hr class=footer-hr
-
-		div class=footer
-			p | © Miaodeli 2013 
-				a href=# | About us

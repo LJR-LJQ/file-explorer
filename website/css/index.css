@@ -1,0 +1,98 @@
+body {
+	padding-top: 70px;
+	font-family: 'Microsoft Yahei';
+}
+
+h1,h2,h3,h4,h5,h6 {
+	font-family: 'Microsoft Yahei';
+}
+
+.none {
+	display: none;
+}
+
+.main-container {
+	max-width: 800px;
+	margin: 0 auto;
+}
+
+.login {
+	max-width: 500px;
+	margin: 0 auto;
+}
+
+.login .notice {
+	text-align: center;
+	margin-top: 60px;
+	margin-bottom: 60px;
+}
+
+.login .notice > h2 {
+	margin-bottom: 15px;
+	font-size: 56px;
+	color: #333;
+}
+
+.login .notice > h4 {
+	color: #ccc;
+}
+
+.login > button {
+	width: 100%;
+	margin-top: 20px;
+}
+
+.file-explorer-header {
+	padding: 15px;
+	background-color: #fff;
+	border-width: 1px;
+	border-color: #ddd;
+	border-radius: 4px 4px 0 0;
+	border-style: solid;
+}
+
+.file-explorer > .breadcrumb {
+	border-radius: 0;
+	border-left: 1px solid #ddd;
+	border-right: 1px solid #ddd;
+	margin-bottom: 0;
+}
+
+.file-explorer-body {
+	background-color: #fff;
+	border-width: 1px;
+	border-color: #ddd;
+	border-radius: 0 0 4px 4px;
+	border-style: solid;
+	padding-bottom: 40px;
+}
+
+.file-explorer-body > table {
+	width: 100%;
+}
+
+.left-column {
+	border-bottom: 1px solid #ddd;
+	border-right: 1px solid #ddd;
+}
+
+.right-column {
+	border-bottom: 1px solid #ddd;
+}
+
+.file-explorer-body > table > tbody > tr > td {
+	width: 50%;
+}
+
+.file-explorer-body > table > tbody > tr > td:hover {
+	cursor: pointer;
+	background-color: #ddd;
+}
+
+.file-explorer-body table th {
+	padding: 8px 15px;
+}
+
+.file-explorer-body table td {
+	padding: 8px 15px;
+}

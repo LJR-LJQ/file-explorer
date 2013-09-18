@@ -1,0 +1,18 @@
+
+.animation-container {
+	-webkit-transition-property: opacity;
+	-webkit-transition-duration: 1.25s;
+	-moz-transition-property: opacity;
+	-moz-transition-duration: 1.25s;
+	transition-property: opacity;
+	transition-duration: 1.25s;
+	opacity: 1;
+}
+
+.anim-show {
+	opacity: 1;
+}
+
+.anim-hide {
+	opacity: 0;
+}

@@ -18,5 +18,4 @@ function redirectToIndex(req, res) {
 }
 
 function Data() {
-	return this;
 }

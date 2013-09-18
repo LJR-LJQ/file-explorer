@@ -9,8 +9,9 @@ var tag = 0;
 var def = {
 	'/index': [
 		'page/template/index.kl',
-		'website/index.css',
-		'website/main.css'
+		'website/css/index.css',
+		'website/css/index-animation.css',
+		'website/js/index.js'
 	],
 	'/remote': [
 		'page/template/remote.kl',

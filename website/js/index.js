@@ -12,6 +12,9 @@ function cancelLogin() {
 	transitionBetween('#login-progress-container', '#login-container');
 }
 
+function logout() {
+	transitionBetween('#file-explorer-container', '#login-container');
+}
 
 function transitionBetween(fromSelector, toSelector, scb) {
 	hideUI(fromSelector, function() {

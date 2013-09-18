@@ -53,7 +53,7 @@ h1,h2,h3,h4,h5,h6 {
 	font-size: 50px;
 }
 
-#file-explorer-container {
+.file-explorer-center-container {
 	max-width: 710px;
 	margin: 0 auto;
 }

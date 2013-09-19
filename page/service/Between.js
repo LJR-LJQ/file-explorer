@@ -57,7 +57,7 @@ function sendRequest(args, callback) {
 
 	// 在请求响应表中添加一个新的条目
 	var reqId = host.reqResTable.add({
-		req: args
+		req: req
 	});
 
 	// 返回 reqId 给客户端
@@ -90,7 +90,7 @@ function receiveResponse(args, callback) {
 
 	// reqId 不能省略
 	reqId = args.reqId;
-	if (!reqId) {
+	if (reqId === undefined) {
 		callback({error: 'reqId is missing'});
 		return;
 	}
@@ -196,7 +196,7 @@ function receiveRequest(args, callback) {
 	// 如果有，则返回请求对象
 	callback({
 		hostId: hostId,
-		reqId: id,
+		reqId: reqId,
 		req: req
 	});
 }
@@ -246,7 +246,7 @@ function sendResponse(args, callback) {
 
 	// reqId 不能省略
 	reqId = args.reqId;
-	if (!reqId) {
+	if (reqId === undefined) {
 		callback({error: 'reqId is missing'});
 		return;
 	}

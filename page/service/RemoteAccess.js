@@ -75,14 +75,14 @@ function start() {
 				return;
 			}
 
-			console.log('receiveRequest success');
-			console.log(obj);
-
 			// 这里要判断一下，如果 reqId 不存在
 			// 说明目前处于空闲状态，没有任务
 			if (obj.reqId === undefined) {
 				return;
 			}
+
+			console.log('receiveRequest success');
+			console.log(obj);debugger;
 
 			handleRemoteRequest(obj.reqId, obj.req);
 		}
@@ -99,7 +99,7 @@ function start() {
 		serviceManager.dispatch(req, cb);
 
 		function cb(resObj) {
-			sendResponse(hostId, pwd, reqId, resObj, success, failed);
+			sendResponse(hostId, pwd, reqId, resObj, success, failure);
 
 			function success(obj) {
 				if (obj.error) {

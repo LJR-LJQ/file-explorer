@@ -59,3 +59,14 @@ KeyTable.prototype.remove = function(key) {
 KeyTable.prototype.exists = function(key) {
 	return this.map[key] !== undefined;
 }
+
+// # cb(key, value)
+KeyTable.prototype.forEach = function(cb) {
+	if (typeof cb !== 'function') return;
+	for (var i = 0, len = this.list.length; i < len; ++i) {
+		var item = this.list[i];
+		if (false === cb(item.key, item.value)) {
+			break;
+		}
+	}
+}

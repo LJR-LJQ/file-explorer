@@ -49,10 +49,10 @@ html
 					h4 | 请输入密码以获得对计算机的访问权限
 				div class=`input-group input-group-lg` style=`margin-bottom:20px;`
 					span class=input-group-addon | 主机编号
-					input type=text class=form-control
+					input id=host-id type=text class=form-control
 				div class=`input-group input-group-lg`
 					span class=input-group-addon | 访问密码
-					input type=password class=form-control
+					input id=password type=password class=form-control
 				button onclick=login(); class=`btn btn-primary btn-lg` | 登录
 			
 			div id=login-progress-container class=`login animation-container anim-hide none`

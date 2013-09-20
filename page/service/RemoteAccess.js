@@ -177,16 +177,16 @@ function setEnable(value, scb, fcb) {
 
 		function setConfigSuccess() {
 			// 成功
-			callback({});
+			scb({});
 		}
 
 		function setConfigFailure() {
-			callback({error: 'save config failed'});
+			fcb({error: 'save config failed'});
 		}
 	}
 
 	function getConfigFailure() {
-		callback({error: 'load config failed'});
+		fcb({error: 'load config failed'});
 	}
 }
 

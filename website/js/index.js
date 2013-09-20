@@ -45,10 +45,13 @@ function onClickLogin() {
 		gData.token = result.token;
 
 		// 更新左上角的主机编号
-		$('#host-id-text').text('主机编号 ' + hostId);
+		setHostIdDom(hostId);
 
 		// 加载数据
 		loadDir('/');
+
+		// 加载配置信息
+		loadRemoteAccessConfig();
 
 		// 转入主界面
 		transitionBetween('#login-progress-container', '#file-explorer-container');
@@ -127,7 +130,19 @@ function onClickSavePassword() {
 }
 
 function onClickSaveRemoteAccessConfig() {
-	
+	if ($('#enable-remote-access')[0].checked) {
+		enableRemoteAccess(success, failure);
+	} else {
+		disableRemoteAccess(success, failure);
+	}
+
+	function success() {
+		alert('修改成功');
+	}
+
+	function failure() {
+		alert('修改失败');
+	}
 }
 
 function uiPlay(actionName) {
@@ -195,7 +210,7 @@ function loadDir(path) {
 
 function loadFile(fileName, filePathAbs) {
 	// 先清空一下当前数据
-	setFileInfo(fileName, '', '', '', '');
+	setFileInfoDom(fileName, '', '', '', '');
 
 	// 弹出文件对话框
 	$('#file-modal').modal('show');
@@ -204,13 +219,23 @@ function loadFile(fileName, filePathAbs) {
 	queryFileInfo(filePathAbs, success, failure);
 
 	function success(result) {
-		setFileInfo(fileName, result.size, result.ctime, result.mtime, result.atime);
+		setFileInfoDom(fileName, result.size, result.ctime, result.mtime, result.atime);
 	}
 
 	function failure(err) {
 		console.log('[loadFile] failed');
 		console.log(err);
 	}
+}
+
+function loadRemoteAccessConfig() {
+	isRemoteAccessEnable(function(result) {
+		if (result.isEnable) {
+			$('#enable-remote-access')[0].checked = true;
+		} else {
+			$('#disable-remote-access')[0].checked = true;
+		}
+	});
 }
 
 /* 用户界面切换的三个基础函数 */
@@ -238,6 +263,9 @@ function showUI(selector, scb) {
 }
 
 /* DOM 写入函数 */
+function setHostIdDom(hostId) {
+	$('#host-id-text').text('主机编号 ' + hostId);
+}
 
 function setLoginProgressDom(title, subtitle) {
 	$('#login-progress-title').text(title);
@@ -324,7 +352,7 @@ function setFileListDom(fileList) {
 	}
 }
 
-function setFileInfo(fileName, fileSize, ctime, mtime, atime) {
+function setFileInfoDom(fileName, fileSize, ctime, mtime, atime) {
 	$('#file-name').text(fileName);
 	$('#file-size').text(fileSize);
 	$('#ctime').text(ctime);
@@ -368,6 +396,27 @@ function queryFileInfo(filePathAbs, scb, fcb) {
 		args: {
 			filePathAbs: filePathAbs
 		}
+	}, scb, fcb);
+}
+
+function enableRemoteAccess(scb, fcb) {
+	authDispatch({
+		funcName: 'RemoteAccess.enable',
+		args: {}
+	}, scb, fcb);
+}
+
+function disableRemoteAccess(scb, fcb) {
+	authDispatch({
+		funcName: 'RemoteAccess.disable',
+		args: {}
+	}, scb, fcb);
+}
+
+function isRemoteAccessEnable(scb, fcb) {
+	authDispatch({
+		funcName: 'RemoteAccess.isEnable',
+		args: {}
 	}, scb, fcb);
 }
 

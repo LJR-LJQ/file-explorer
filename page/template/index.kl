@@ -49,40 +49,40 @@ html
 					h4 | 请输入密码以获得对计算机的访问权限
 				div class=`input-group input-group-lg` style=`margin-bottom:20px;`
 					span class=input-group-addon | 主机编号
-					input id=host-id type=text class=form-control
+					input id=host-id type=text class=form-control value=10000
 				div class=`input-group input-group-lg`
 					span class=input-group-addon | 访问密码
-					input id=password type=password class=form-control
+					input id=password type=password class=form-control value=test
 				button onclick=login(); class=`btn btn-primary btn-lg` | 登录
 			
 			div id=login-progress-container class=`login animation-container anim-hide none`
 				div class=notice
-					h2 | 登录中
-					h4 | 正在验证您的身份，请稍候
-				button onclick=cancelLogin(); class=`btn btn-primary btn-lg` | 取消
+					h2 id=login-progress-title | 登录中
+					h4 id=login-progress-subtitle | 正在验证您的身份，请稍候
+				button onclick=uiPlay('cancelLogin'); class=`btn btn-primary btn-lg` | 取消
 
 			div id=logout-container class=`login animation-container anim-hide none`
 				div class=notice
 					h2 | 已退出
 					h4 | 您已安全的退出了系统
-				button onclick=logoutSuccess(); class=`btn btn-primary btn-lg` | 确定
+				button onclick=uiPlay('logoutSuccess'); class=`btn btn-primary btn-lg` | 确定
 
 			div id=file-explorer-container class=`animation-container anim-hide none`
 				nav id=main-nav class=`navbar navbar-default navbar-static-top` role=navigation
 					a href=# class=navbar-brand | 喵德利
-					p class=navbar-text | 远程访问号 9100
-					button onclick=logout(); type=button class=`btn btn-info navbar-btn navbar-right` style=`margin-right:15px;`
+					p class=navbar-text | 主机编号 9100
+					button onclick=uiPlay('logout'); type=button class=`btn btn-default navbar-btn navbar-right` style=`margin-right:15px;`
 						span class=`glyphicon glyphicon-log-out`
 						|  
 						| 退出
 					p class=`navbar-text pull-right`
-						a href=javascript:config(); 
+						a href=javascript:uiPlay('config'); 
 							span class=`glyphicon glyphicon-wrench`
 							|  
 							| 选项设置
 				div id=config-container class=`animation-container anim-hide none`
 					div class=`config-block goback`
-						a href=javascript:backFromConfig(); | ‹ 返回文件浏览
+						a href=javascript:uiPlay('backFromConfig'); | ‹ 返回文件浏览
 					div class=`config-block config-remote-access`
 						h4 class=config-block-title | 互联网接入
 						hr
@@ -119,7 +119,7 @@ html
 				div id=file-explorer-center-container class=`animation-container`
 					div class=column
 						h2 class=title | 位置
-						ul class=position-list
+						ul id=position-list class=position-list
 							li
 								a href=# | C
 							li
@@ -127,7 +127,7 @@ html
 							li class=current
 								a href=# | System32
 						h2 class=title | 目录
-						ul class=item-list
+						ul id=dir-list class=item-list
 							li
 								span
 									div | 0123
@@ -506,7 +506,7 @@ html
 								a href=# | zh-TW
 					div class=`column last-column`
 						h2 class=title | 文件
-						ul class=item-list
+						ul id=file-list class=item-list
 							li
 								span
 									div | 0123

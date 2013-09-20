@@ -38,7 +38,7 @@ html
 						br
 
 					div class=modal-footer
-						button id=download-btn onclick=onClickDownloadFile(); type=button class=`btn btn-primary` | 下载
+						a href=# target=_blank id=download-btn onclick=onClickDownloadFile(); class=`btn btn-primary` | 下载
 
 		div class=main-container
 			div id=login-container class=`login animation-container`

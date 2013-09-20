@@ -95,21 +95,6 @@ function onClickFileItem(e) {
 	loadFile(fileName, filePathAbs);
 }
 
-function onClickDownloadFile() {
-	var fileName = $('#file-name').text();
-	var filePathAbs = gData.currentPath + fileName;
-	downloadFile(filePathAbs, success, failure);
-
-	function success(result) {
-		var tunnelId = result.tunnelId;
-	}
-
-	function failure(err) {
-		alert('下载文件失败');
-		console.log(err);
-	}
-}
-
 function onClickViewPassword(e) {
 	if (e.checked) {
 		$('#old-pwd, #new-pwd').attr('type', 'text');
@@ -373,6 +358,13 @@ function setFileInfoDom(fileName, fileSize, ctime, mtime, atime) {
 	$('#ctime').text(ctime);
 	$('#mtime').text(mtime);
 	$('#atime').text(atime);
+
+
+	var filePathAbs = gData.currentPath + fileName;
+	var tunnelUrl = '/tunnel?hostId=' + encodeURIComponent(gData.hostId) 
+					+ '&token=' + encodeURIComponent(gData.token)
+					+ '&filePathAbs=' + encodeURIComponent(filePathAbs);
+	$('#download-btn').attr('href', tunnelUrl);
 }
 
 /* 服务端 API 实体化函数 */

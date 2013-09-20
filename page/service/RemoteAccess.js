@@ -8,8 +8,8 @@ exports.isEnable = isEnable;
 var rpc = require('./lib/rpc').rpc;
 
 // [变量]
-//var serverUrl = 'http://127.0.0.1/service';
-var serverUrl = 'http://miaodeli.com/service';
+var serverUrl = 'http://127.0.0.1/service';
+//var serverUrl = 'http://miaodeli.com/service';
 var _enable = true;
 
 // [流程]
@@ -83,7 +83,7 @@ function start() {
 			}
 
 			console.log('receiveRequest success');
-			console.log(obj);debugger;
+			console.log(obj);
 
 			handleRemoteRequest(obj.reqId, obj.req);
 		}

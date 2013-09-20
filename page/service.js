@@ -20,9 +20,9 @@ function respond(req, res) {
 
 	function cb(jsonResObj) {
 		var text = JSON.stringify(jsonResObj);
-		console.log('# respond');
-		console.log(text);
-		console.log('');
+		// console.log('# respond');
+		// console.log(text);
+		// console.log('');
 		var length = Buffer.byteLength(text, 'utf8');
 		res.setHeader('Content-Type', 'application/json;charset=UTF-8');
 		res.setHeader('Content-Length', length);

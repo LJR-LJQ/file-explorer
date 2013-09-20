@@ -20,27 +20,25 @@ html
 						button type=button class=close data-dismiss=modal aria-hidden=true | &times;
 						h4 class=modal-title | 文件下载
 					div class=modal-body
-						p | 您要下载这个文件吗？
 						strong | 文件名：
-						span | filename.txt
+						span id=file-name | filename.txt
 						br
 						strong | 大小：
-						span | 45MB
+						span id=file-size | 45MB
 						br
 						br
 						strong | 创建时间：
-						span | 2013‎年‎9‎月‎13‎日，‏‎13:07:44
+						span id=ctime | 2013‎年‎9‎月‎13‎日，‏‎13:07:44
 						br
 						strong | 修改时间：
-						span | 2013‎年‎9‎月‎13‎日，‏‎13:07:44
+						span id=mtime | 2013‎年‎9‎月‎13‎日，‏‎13:07:44
 						br
 						strong | 访问时间：
-						span | 2013‎年‎9‎月‎13‎日，‏‎13:07:44
+						span id=atime | 2013‎年‎9‎月‎13‎日，‏‎13:07:44
 						br
 
 					div class=modal-footer
-						button type=button class=`btn btn-primary` | 下载
-						button type=button class=`btn btn-default` data-dismiss=modal | 取消
+						button id=download-btn type=button class=`btn btn-primary` | 下载
 
 		div class=main-container
 			div id=login-container class=`login animation-container`
@@ -53,7 +51,7 @@ html
 				div class=`input-group input-group-lg`
 					span class=input-group-addon | 访问密码
 					input id=password type=password class=form-control value=test
-				button onclick=login(); class=`btn btn-primary btn-lg` | 登录
+				button onclick=onClickLogin(); class=`btn btn-primary btn-lg` | 登录
 			
 			div id=login-progress-container class=`login animation-container anim-hide none`
 				div class=notice
@@ -92,26 +90,26 @@ html
 								| 启用互联网接入功能后，您就可以借助喵德利网络，通过手机或其他设备机远程访问这台计算机了
 							div class=radio
 								label
-									input type=radio name=optionsRadios id=enableRemoteAccess value=option1 checked
+									input id=enable-remote-access type=radio name=optionsRadios id=enableRemoteAccess value=option1 checked
 									| 启用互联网接入功能，允许远程访问本计算机
 							div class=radio
 								label
-									input type=radio name=optionsRadios id=disableRemoteAccess val=option2
+									input id=disable-remote-access type=radio name=optionsRadios id=disableRemoteAccess val=option2
 									| 禁用互联网接入功能
-							button type=button class=`btn btn-primary` | 保存
+							button onclick=onClickSaveConfig(); type=button class=`btn btn-primary` | 保存
 					div class=`config-block config-passwd`
 						h4 class=config-block-title | 修改密码
 						hr
 						div class=content
 							div class=input-group
 								span class=input-group-addon | 旧密码
-								input type=password class=form-control
+								input id=old-pwd type=password class=form-control
 							div class=input-group
 								span class=input-group-addon | 新密码
-								input type=password class=form-control
+								input id=new-pwd type=password class=form-control
 							div class=`checkbox pull-right`
 								label
-									input type=checkbox value=
+									input type=checkbox onclick=onClickViewPassword(this);
 									| 显示密码
 							button type=button class=`btn btn-primary` | 保存
 

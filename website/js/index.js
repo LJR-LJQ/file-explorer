@@ -5,15 +5,12 @@ var gData = {
 
 function resetUI() {
 	// 恢复登录进度状态
-	setLoginProgress('登录中', '正在验证您的身份，请稍候');
+	setLoginProgressDom('登录中', '正在验证您的身份，请稍候');
 }
 
-function setLoginProgress(title, subtitle) {
-	$('#login-progress-title').text(title);
-	$('#login-progress-subtitle').text(subtitle);
-}
+/* 用户操作事件处理函数 */
 
-function login() {
+function onClickLogin() {
 	var hostId,
 		password;
 
@@ -36,26 +33,22 @@ function login() {
 	// 转入登录中界面
 	transitionBetween('#login-container', '#login-progress-container', function() {
 		// 提交登录数据
-		send(hostId, {
-			funcName: 'Authorization.auth',
-			args: {
-				password: password
-			}
-		}, success, failure);
+		auth(hostId, password, success, failure);
 	});
 
 	function success(result) {
 		console.log('success');
 		console.log(result);
 
-		// 把 hostId 记录到全局变量
+		// 把 hostId 和 token 记录到全局变量
 		gData.hostId = hostId;
+		gData.token = result.token;
 
 		// 更新左上角的主机编号
 		$('#host-id-text').text('主机编号 ' + hostId);
 
 		// 加载数据
-		queryDir('/');
+		loadDir('/');
 
 		// 转入主界面
 		transitionBetween('#login-progress-container', '#file-explorer-container');
@@ -66,124 +59,13 @@ function login() {
 		console.log(err);
 
 		// 显示登录失败信息
-		setLoginProgress('登录失败', '您的身份未能通过验证，请重试');
+		setLoginProgressDom('登录失败', '您的身份未能通过验证，请重试');
 	}
 }
 
-function queryDir(path) {
-	send(gData.hostId, {
-		funcName: 'Directory.query',
-		args: {
-			dirPathAbs: path
-		}
-	}, success, failure);
-
-	function success(result) {
-		console.log(result);
-
-		// 把路径记录到全局变量
-		gData.currentPath = result.path;
-
-		// 显示到界面上
-		dataToDom(result);
-	}
-
-	function failure(err) {
-		console.log('[queryDir] failure');
-		console.log(err);
-	}
-
-	function dataToDom(data) {
-		if (!data) return;
-
-		pathDataToDom(data.path);
-		dirDataToDom(data.dirList);
-		fileDataToDom(data.fileList);
-
-		function dirDataToDom(dirList) {
-			var container = $('#dir-list');
-			container.empty();
-
-			if (!dirList) return;
-			dirList.forEach(function(dir, i) {
-				// 注意序列号从 1 开始
-				container.append(dirItemDom(i + 1, dir));
-			});
-
-			function dirItemDom(i, name) {
-				var li = $('<li></li>');
-				var span = $('<span></span>');
-				var div = $('<div></div>').text(i);
-				var a = $('<a></a>')
-							.text(name)
-							.attr('href', 'javascript:')
-							.attr('onclick', 'onClickDirItem(this);');
-
-				span.append(div);
-				li.append(span);
-				li.append(a);
-
-				return li;
-			}
-		}
-
-		function fileDataToDom(fileList) {
-			var container = $('#file-list');
-			container.empty();
-
-			if (!fileList) return;
-			fileList.forEach(function(file, i) {
-				// 注意序列号从 1 开始
-				container.append(dirItemDom(i + 1, file));
-			});
-
-			function dirItemDom(i, name) {
-				var li = $('<li></li>');
-				var span = $('<span></span>');
-				var div = $('<div></div>').text(i);
-				var a = $('<a></a>')
-							.text(name)
-							.attr('href', 'javascript:')
-							.attr('onclick', 'onClickFileItem(this);');
-
-				span.append(div);
-				li.append(span);
-				li.append(a);
-
-				return li;
-			}
-		}
-
-		function pathDataToDom(path) {
-			var container = $('#position-list');
-			container.empty();
-
-			container.append(pathItemDom('计算机', 'onClickComputer();'));
-
-			path.split('/').forEach(function(pathPart) {
-				if (!pathPart) return;
-				container.append(pathItemDom(pathPart, 'onClickPathItem(this);'));
-			});
-
-			// 把最后一个元素设置为激活状态
-			$('#position-list > li:last-child').addClass('current');
-
-			function pathItemDom(name, onclick) {
-				var li = $('<li></li>');
-				var a = $('<a></a>')
-							.text(name)
-							.attr('href', 'javascript:')
-							.attr('onclick', onclick);
-
-				li.append(a);
-				return li;
-			}
-		}
-	}
-}
 
 function onClickComputer() {
-	queryDir('/');
+	loadDir('/');
 }
 
 function onClickPathItem(e) {
@@ -197,17 +79,30 @@ function onClickPathItem(e) {
 	}
 
 	console.log(path);
-	queryDir(path);
+	loadDir(path);
 }
 
 function onClickDirItem(e) {
 	var dirName = $(e).text();
-	queryDir(gData.currentPath + dirName + '/');
+	loadDir(gData.currentPath + dirName + '/');
 }
 
 function onClickFileItem(e) {
 	var fileName = $(e).text();
-	alert(fileName);
+	var filePathAbs = gData.currentPath + fileName;
+	loadFile(fileName, filePathAbs);
+}
+
+function onClickViewPassword(e) {
+	if (e.checked) {
+		$('#old-pwd, #new-pwd').attr('type', 'text');
+	} else {
+		$('#old-pwd, #new-pwd').attr('type', 'password');
+	}
+}
+
+function onClickSaveConfig() {
+	
 }
 
 function uiPlay(actionName) {
@@ -250,6 +145,51 @@ function uiPlay(actionName) {
 	}
 }
 
+/* 业务概念级别的函数 */
+
+function loadDir(path) {
+	queryDir(path, success, failure);
+
+	function success(result) {
+		console.log(result);
+
+		// 把路径记录到全局变量
+		gData.currentPath = result.path;
+
+		// 显示到界面上
+		setPathDom(result.path);
+		setDirListDom(result.dirList);
+		setFileListDom(result.fileList);
+	}
+
+	function failure(err) {
+		console.log('[loadDir] failure');
+		console.log(err);
+	}
+}
+
+function loadFile(fileName, filePathAbs) {
+	// 先清空一下当前数据
+	setFileInfo(fileName, '', '', '', '');
+
+	// 弹出文件对话框
+	$('#file-modal').modal('show');
+
+	// 查询文件信息
+	queryFileInfo(filePathAbs, success, failure);
+
+	function success(result) {
+		setFileInfo(fileName, result.size, result.ctime, result.mtime, result.atime);
+	}
+
+	function failure(err) {
+		console.log('[loadFile] failed');
+		console.log(err);
+	}
+}
+
+/* 用户界面切换的三个基础函数 */
+
 function transitionBetween(fromSelector, toSelector, scb) {
 	hideUI(fromSelector, function() {
 		showUI(toSelector, scb);
@@ -271,6 +211,141 @@ function showUI(selector, scb) {
 		safeCall(scb, []);
 	}, 0);
 }
+
+/* DOM 写入函数 */
+
+function setLoginProgressDom(title, subtitle) {
+	$('#login-progress-title').text(title);
+	$('#login-progress-subtitle').text(subtitle);
+}
+
+function setPathDom(path) {
+	var container = $('#position-list');
+	container.empty();
+
+	container.append(pathItemDom('计算机', 'onClickComputer();'));
+
+	path.split('/').forEach(function(pathPart) {
+		if (!pathPart) return;
+		container.append(pathItemDom(pathPart, 'onClickPathItem(this);'));
+	});
+
+	// 把最后一个元素设置为激活状态
+	$('#position-list > li:last-child').addClass('current');
+
+	function pathItemDom(name, onclick) {
+		var li = $('<li></li>');
+		var a = $('<a></a>')
+					.text(name)
+					.attr('href', 'javascript:')
+					.attr('onclick', onclick);
+
+		li.append(a);
+		return li;
+	}
+}
+
+function setDirListDom(dirList) {
+	var container = $('#dir-list');
+	container.empty();
+
+	if (!dirList) return;
+	dirList.forEach(function(dir, i) {
+		// 注意序列号从 1 开始
+		container.append(dirItemDom(i + 1, dir));
+	});
+
+	function dirItemDom(i, name) {
+		var li = $('<li></li>');
+		var span = $('<span></span>');
+		var div = $('<div></div>').text(i);
+		var a = $('<a></a>')
+					.text(name)
+					.attr('href', 'javascript:')
+					.attr('onclick', 'onClickDirItem(this);');
+
+		span.append(div);
+		li.append(span);
+		li.append(a);
+
+		return li;
+	}
+}
+
+function setFileListDom(fileList) {
+	var container = $('#file-list');
+	container.empty();
+
+	if (!fileList) return;
+	fileList.forEach(function(file, i) {
+		// 注意序列号从 1 开始
+		container.append(dirItemDom(i + 1, file));
+	});
+
+	function dirItemDom(i, name) {
+		var li = $('<li></li>');
+		var span = $('<span></span>');
+		var div = $('<div></div>').text(i);
+		var a = $('<a></a>')
+					.text(name)
+					.attr('href', 'javascript:')
+					.attr('onclick', 'onClickFileItem(this);');
+
+		span.append(div);
+		li.append(span);
+		li.append(a);
+
+		return li;
+	}
+}
+
+function setFileInfo(fileName, fileSize, ctime, mtime, atime) {
+	$('#file-name').text(fileName);
+	$('#file-size').text(fileSize);
+	$('#ctime').text(ctime);
+	$('#mtime').text(mtime);
+	$('#atime').text(atime);
+}
+
+/* 服务端 API 实体化函数 */
+function auth(hostId, password, scb, fcb) {
+	send(hostId, {
+		funcName: 'Authorization.auth',
+		args: {
+			password: password
+		}
+	}, scb, fcb);
+}
+
+function queryDir(path, scb, fcb) {
+	authDispatch({
+		funcName: 'Directory.query',
+		args: {
+			dirPathAbs: path
+		}
+	}, scb, fcb);
+}
+
+function queryFileInfo(filePathAbs, scb, fcb) {
+	authDispatch({
+		funcName: 'File.queryFileInfo',
+		args: {
+			filePathAbs: filePathAbs
+		}
+	}, scb, fcb);
+}
+
+function authDispatch(req, scb, fcb) {
+	send(gData.hostId, {
+		funcName: 'Authorization.dispatch',
+		args: {
+			token: gData.token,
+			req: req
+		}
+	}, scb, fcb);
+}
+
+/* 网络通信的三个基础函数 */
 
 // 一体化的发送请求/接收响应功能
 function send(hostId, req, scb, fcb) {

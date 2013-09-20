@@ -192,3 +192,7 @@ ul.position-list li.current {
 	margin-top: 0;
 	margin-bottom: 20px;
 }
+
+#download-btn {
+	width: 100%;
+}

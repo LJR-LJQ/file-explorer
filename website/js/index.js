@@ -63,7 +63,6 @@ function onClickLogin() {
 	}
 }
 
-
 function onClickComputer() {
 	loadDir('/');
 }
@@ -101,7 +100,33 @@ function onClickViewPassword(e) {
 	}
 }
 
-function onClickSaveConfig() {
+function onClickSavePassword() {
+	var oldPwd = $('#old-pwd').val(),
+		newPwd = $('#new-pwd').val();
+
+	if (!oldPwd) {
+		$('#old-pwd').focus();
+		return;
+	}
+
+	if (!newPwd) {
+		$('#new-pwd').focus();
+		return;
+	}
+
+	changePassword(oldPwd, newPwd, success, failure);
+
+	function success() {
+		alert('修改密码成功');
+	}
+
+	function failure(err) {
+		alert('修改密码失败');
+		console.log(err);
+	}
+}
+
+function onClickSaveRemoteAccessConfig() {
 	
 }
 
@@ -313,6 +338,17 @@ function auth(hostId, password, scb, fcb) {
 		funcName: 'Authorization.auth',
 		args: {
 			password: password
+		}
+	}, scb, fcb);
+}
+
+function changePassword(oldPwd, newPwd, scb, fcb) {
+	send(gData.hostId, {
+		funcName: 'Authorization.changePassword',
+		args: {
+			token: gData.token,
+			oldPwd: oldPwd,
+			newPwd: newPwd
 		}
 	}, scb, fcb);
 }

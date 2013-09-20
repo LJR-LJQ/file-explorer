@@ -2,6 +2,7 @@
 exports.serviceName = 'Authorization';
 exports.auth = auth;
 exports.dispatch = dispatch;
+exports.changePassword = changePassword;
 
 // [模块]
 var KeyTable = require('./lib/key-table');
@@ -24,10 +25,7 @@ function auth(args, callback) {
 	}
 
 	// 为了进行密码校验，需要先查询到当前的密码
-	serviceManager.dispatch({
-		funcName: 'Config.getConfig',
-		args: {}
-	}, getConfigSuccess, getConfigFailure);
+	getConfig(getConfigSuccess, getConfigFailure);
 
 	function getConfigSuccess(config) {
 		if (password === config.password) {
@@ -38,7 +36,7 @@ function auth(args, callback) {
 			tokenTable.add(token, {});
 
 			// 返回给客户端
-			callback({token: token});debugger;
+			callback({token: token});
 		} else {
 			callback({error: 'password mismatch'});
 		}
@@ -47,6 +45,70 @@ function auth(args, callback) {
 	function getConfigFailure(err) {
 		callback({error: 'get config failed'});
 	}
+}
+
+function changePassword(args, callback) {
+	var token,
+		oldPwd,
+		newPwd;
+
+	token = args.token;
+	oldPwd = args.oldPwd;
+	newPwd = args.newPwd;
+
+	// 基本的参数验证
+
+	if (typeof token !== 'string' || token === '') {
+		callback({error: 'token must be string and not empty'});
+		return;
+	}
+
+	if (typeof oldPwd !== 'string' || oldPwd === '') {
+		callback({error: 'oldPwd must be string and not empty'});
+		return;
+	}
+
+	if (typeof newPwd !== 'string' || newPwd === '') {
+		callback({error: 'newPwd must be string and not empty'});
+		return;
+	}
+
+	// token 必须有效
+	if (!tokenTable.exists(token)) {
+		callback({error: 'invalid token'});
+		return;
+	}
+
+	// 验证密码是否匹配
+	// 需要从配置中查到当前密码，然后比较
+	getConfig(getConfigSuccess, getConfigFailure);
+
+	function getConfigSuccess(config) {
+		if (oldPwd === config.password) {
+			// 密码正确，可以修改密码
+			config.password = newPwd;
+			// 保存密码
+			setConfig(config, setConfigSuccess, setConfigFailure);
+		} else {
+			callback({error: 'password mismatch'});
+		}
+
+		function setConfigSuccess() {
+			// 修改密码成功
+			callback({});
+		}
+
+		function setConfigFailure(err) {
+			// 保存修改后的密码失败
+			// 但是此时内存中已经是新密码了
+			callback(err);
+		}
+	}
+
+	function getConfigFailure(err) {
+		callback({error: 'get config failed'});
+	}
+
 }
 
 function dispatch(args, callback) {
@@ -83,4 +145,18 @@ function createToken() {
 		token = Math.random().toString();
 	} while (tokenTable.get(token) !== undefined);
 	return token;
+}
+
+function getConfig(scb, fcb) {
+	serviceManager.dispatch({
+		funcName: 'Config.getConfig',
+		args: {}
+	}, scb, fcb);
+}
+
+function setConfig(newConfig, scb, fcb) {
+	serviceManager.dispatch({
+		funcName: 'Config.setConfig',
+		args: newConfig
+	}, scb, fcb);
 }

@@ -1,8 +1,8 @@
 // [导出]
 exports.serviceName = 'RemoteAccess';
+exports.isEnable = isEnable;
 exports.enable = enable;
 exports.disable = disable;
-exports.isEnable = isEnable;
 
 // [模块]
 var rpc = require('./lib/rpc').rpc;
@@ -10,24 +10,24 @@ var rpc = require('./lib/rpc').rpc;
 // [变量]
 var serverUrl = 'http://127.0.0.1/service';
 //var serverUrl = 'http://miaodeli.com/service';
-var _enable = true;
 
 // [流程]
-start();
+setTimeout(function() {
+	// 如果配置中指明要启用远程访问，才会调用 start 函数
+	getConfig(function(config) {
+		if (config.enableRemoteAccess === true) {
+			console.log('start RemoteAccess');
+			start();
+		} else {
+			console.log('RemoteAccess is disabled');
+		}
+	}, function(err) {
+		console.log('RemoteAccess is disabled, cause config load failed');
+		console.log(JSON.stringify(err));
+	})
+}, 1000);
 
 // [函数]
-function enable() {
-	_enable = true;
-}
-
-function disable() {
-	_enable = false;
-}
-
-function isEnable() {
-	return _enable;
-}
-
 function start() {
 	var requesting = false;
 	var hostId,
@@ -49,9 +49,7 @@ function start() {
 
 		// 开始不断的进行请求
 		setInterval(function() {
-			if (_enable) {
-				doRequest();
-			}
+			doRequest();
 		}, 500);
 
 	}, function(err) {
@@ -142,4 +140,66 @@ function start() {
 			res: res
 		}, scb, fcb);
 	}
+}
+
+function isEnable(args, callback) {
+	// 注意，设置会在下一次启动时才生效
+	getConfig(getConfigSuccess, getConfigFailure);
+
+	function getConfigSuccess(config) {
+		if (config.enableRemoteAccess === true) {
+			callback({isEnable: true});
+		} else {
+			callback({isEnable: false});
+		}
+	}
+
+	function getConfigFailure() {
+		callback({error: 'load config failed'});
+	}
+}
+
+function enable(args, callback) {
+	setEnable(true, callback, callback);
+}
+
+function disable(args, callback) {
+	setEnable(false, callback, callback);
+}
+
+function setEnable(value, scb, fcb) {
+	// 注意，设置会在下一次启动时才生效
+	getConfig(getConfigSuccess, getConfigFailure);
+
+	function getConfigSuccess(config) {
+		config.enableRemoteAccess = value;
+		setConfig(config, setConfigSuccess, setConfigFailure);
+
+		function setConfigSuccess() {
+			// 成功
+			callback({});
+		}
+
+		function setConfigFailure() {
+			callback({error: 'save config failed'});
+		}
+	}
+
+	function getConfigFailure() {
+		callback({error: 'load config failed'});
+	}
+}
+
+function getConfig(scb, fcb) {
+	serviceManager.dispatch({
+		funcName: 'Config.getConfig',
+		args: {}
+	}, scb, fcb);
+}
+
+function setConfig(newConfig, scb, fcb) {
+	serviceManager.dispatch({
+		funcName: 'Config.setConfig',
+		args: newConfig
+	}, scb, fcb);
 }

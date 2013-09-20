@@ -96,7 +96,7 @@ html
 								label
 									input id=disable-remote-access type=radio name=optionsRadios id=disableRemoteAccess val=option2
 									| 禁用互联网接入功能
-							button onclick=onClickSaveConfig(); type=button class=`btn btn-primary` | 保存
+							button onclick=onClickSaveRemoteAccessConfig(); type=button class=`btn btn-primary` | 保存
 					div class=`config-block config-passwd`
 						h4 class=config-block-title | 修改密码
 						hr
@@ -111,7 +111,7 @@ html
 								label
 									input type=checkbox onclick=onClickViewPassword(this);
 									| 显示密码
-							button type=button class=`btn btn-primary` | 保存
+							button type=button onclick=onClickSavePassword(); class=`btn btn-primary` | 保存
 
 
 				div id=file-explorer-center-container class=`animation-container`

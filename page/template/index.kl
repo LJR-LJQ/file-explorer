@@ -12,6 +12,7 @@ html
 		script src=js/index.js type=text/javascript
 		link href=css/index.css rel=stylesheet media=screen
 		link href=css/index-animation.css rel=stylesheet media=screen
+		script src=js/stat.js type=text/javascript
 	body
 		div id=`file-modal` class=`modal fade`
 			div class=modal-dialog

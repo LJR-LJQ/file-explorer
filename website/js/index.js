@@ -51,6 +51,9 @@ function login() {
 		// 把 hostId 记录到全局变量
 		gData.hostId = hostId;
 
+		// 更新左上角的主机编号
+		$('#host-id-text').text('主机编号 ' + hostId);
+
 		// 加载数据
 		queryDir('/');
 

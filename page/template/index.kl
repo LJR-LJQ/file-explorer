@@ -38,7 +38,7 @@ html
 						br
 
 					div class=modal-footer
-						button id=download-btn type=button class=`btn btn-primary` | 下载
+						button id=download-btn onclick=onClickDownloadFile(); type=button class=`btn btn-primary` | 下载
 
 		div class=main-container
 			div id=login-container class=`login animation-container`
@@ -881,5 +881,3 @@ html
 								span
 									div | 0123
 								a href=# | zh-TW
-
-

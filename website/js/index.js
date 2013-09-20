@@ -95,6 +95,21 @@ function onClickFileItem(e) {
 	loadFile(fileName, filePathAbs);
 }
 
+function onClickDownloadFile() {
+	var fileName = $('#file-name').text();
+	var filePathAbs = gData.currentPath + fileName;
+	downloadFile(filePathAbs, success, failure);
+
+	function success(result) {
+		var tunnelId = result.tunnelId;
+	}
+
+	function failure(err) {
+		alert('下载文件失败');
+		console.log(err);
+	}
+}
+
 function onClickViewPassword(e) {
 	if (e.checked) {
 		$('#old-pwd, #new-pwd').attr('type', 'text');
@@ -393,6 +408,15 @@ function queryDir(path, scb, fcb) {
 function queryFileInfo(filePathAbs, scb, fcb) {
 	authDispatch({
 		funcName: 'File.queryFileInfo',
+		args: {
+			filePathAbs: filePathAbs
+		}
+	}, scb, fcb);
+}
+
+function downloadFile(filePathAbs, scb, fcb) {
+	authDispatch({
+		funcName: 'Download.downloadFile',
 		args: {
 			filePathAbs: filePathAbs
 		}

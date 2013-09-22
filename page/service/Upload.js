@@ -9,10 +9,11 @@ var fs = require('fs'),
 	http = require('http');
 
 // [变量]
-var uploadToUrlBase = 'http://127.0.0.1/upload';
+//var uploadToUrlBase = 'http://127.0.0.1/upload';
+var uploadToUrlBase = 'http://miaodeli.com/upload';
 
 // [函数]
-function uploadFile(args, callback) {debugger;
+function uploadFile(args, callback) {
 	var filePathAbs,
 		tunnelId,
 		fileName,
@@ -79,7 +80,7 @@ function uploadFile(args, callback) {debugger;
 		}
 
 		function onResponse(res) {
-			console.log('file uploaded.');
+			console.log('file upload server respond: ' + res.statusCode);
 		}
 	}
 }

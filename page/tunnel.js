@@ -32,7 +32,7 @@ function respond(req, res) {
 		res.end();
 	}
 
-	function downloadFile() {debugger;
+	function downloadFile() {
 		var hostId,
 			token,
 			filePathAbs,
@@ -80,7 +80,7 @@ function respond(req, res) {
 		}
 	}
 
-	function uploadFile() {debugger;
+	function uploadFile() {
 		var tunnelId,
 			tunnel,
 			contentLength;
@@ -121,7 +121,17 @@ function respond(req, res) {
 		tunnel.res.setHeader('Content-Length', contentLength);
 		tunnel.res.setHeader('Content-Disposition', 'attachment; filename=' + encodeURIComponent(tunnel.fileName));
 
+		// 注意处理浏览器突然断开这种情况
+		tunnel.res.once('close', onBrowserTunnelClose);
+
 		// 开始转发
 		req.pipe(tunnel.res);
+
+		function onBrowserTunnelClose() {
+			// 既然浏览器断开了，那么也断开和计算机的连接
+			// Gateway timeout
+			res.statusCode = 504;
+			res.end();
+		}
 	}
 }

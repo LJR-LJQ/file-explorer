@@ -1,6 +1,7 @@
 body {
 	padding-bottom: 70px;
 	font-family: 'Microsoft Yahei';
+	min-width: 780px;
 }
 
 h1,h2,h3,h4,h5,h6 {
@@ -58,7 +59,8 @@ h1,h2,h3,h4,h5,h6 {
 }
 
 #file-explorer-center-container {
-	max-width: 710px;
+	max-width: 780px;
+	padding-right: 70px;
 	margin: 0 auto;
 }
 

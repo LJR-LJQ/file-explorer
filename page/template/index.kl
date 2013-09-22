@@ -38,7 +38,7 @@ html
 						br
 
 					div class=modal-footer
-						a href=# target=_blank id=download-btn onclick=onClickDownloadFile(); class=`btn btn-primary` | 下载
+						a href=# target=download-iframe id=download-btn onclick=onClickDownloadFile(); class=`btn btn-primary` | 下载
 
 		div class=main-container
 			div id=login-container class=`login animation-container`
@@ -126,5 +126,8 @@ html
 						h2 class=title | 文件
 						ul id=file-list class=item-list
 							
+		div style=`display:none`
+			iframe name=download-iframe
+
 		div style=`display:none`
 			script src=js/stat.js type=text/javascript

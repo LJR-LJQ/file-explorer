@@ -145,6 +145,11 @@ function onClickSaveRemoteAccessConfig() {
 	}
 }
 
+function onClickDownloadFile() {
+	// 关闭下载窗口
+	$('#file-modal').modal('hide');
+}
+
 function uiPlay(actionName) {
 	switch(actionName) {
 		case 'cancelLogin':

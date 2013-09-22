@@ -361,7 +361,7 @@ function setFileInfoDom(fileName, fileSize, ctime, mtime, atime) {
 
 
 	var filePathAbs = gData.currentPath + fileName;
-	var tunnelUrl = '/tunnel?hostId=' + encodeURIComponent(gData.hostId) 
+	var tunnelUrl = '/download?hostId=' + encodeURIComponent(gData.hostId) 
 					+ '&token=' + encodeURIComponent(gData.token)
 					+ '&filePathAbs=' + encodeURIComponent(filePathAbs);
 	$('#download-btn').attr('href', tunnelUrl);
@@ -400,15 +400,6 @@ function queryDir(path, scb, fcb) {
 function queryFileInfo(filePathAbs, scb, fcb) {
 	authDispatch({
 		funcName: 'File.queryFileInfo',
-		args: {
-			filePathAbs: filePathAbs
-		}
-	}, scb, fcb);
-}
-
-function downloadFile(filePathAbs, scb, fcb) {
-	authDispatch({
-		funcName: 'Download.downloadFile',
 		args: {
 			filePathAbs: filePathAbs
 		}

@@ -1,8 +1,8 @@
 // [导出]
 exports.respond = respond;
 exports.def = {
-	get: ['/tunnel'],
-	put: ['/tunnel']
+	get: ['/download'],
+	put: ['/upload']
 };
 
 // [模块]
@@ -10,59 +10,118 @@ var url = require('url'),
 	fs = require('fs'),
 	path = require('path');
 
-function respond(req, res) {
-	var reqUrl,
-		id;
+var IdTable = require('./service/lib/id-table');
 
-	// id 参数必须给出
+// [变量]
+var tunnelTable = IdTable.create();
+
+// [函数]
+function respond(req, res) {
+	var reqUrl;
+
 	reqUrl = url.parse(req.url, true);
 
-	id = reqUrl.query['id'];
-	if (id === undefined || id === null) {
-		res.statusCode = 404;
+	if (req.method === 'GET') {
+		downloadFile();
+	} else if (req.method === 'PUT') {
+		uploadFile();
+	} else {
+		// 不应当出现这种情况
+		// Method Not Allowed
+		res.statusCode = 405;
 		res.end();
 	}
 
-	// 查询 id 对应的信息
-	queryTunnelInfo(id, queryTunnelInfoSuccess, queryTunnelInfoFailure);
+	function downloadFile() {debugger;
+		var hostId,
+			token,
+			filePathAbs,
+			tunnelId;
 
-	function queryTunnelInfoSuccess(info) {
-		// 查询成功，根据客户端请求不同
-		// 接收文件或者发送文件
-		if (req.method === 'GET') {
-			respondFile();
-		} else if (req.method === 'PUT') {
-			receiveFile();
+		// hostId, token, filePathAbs 这三个参数必须给出
+		hostId = reqUrl.query['hostId'];
+		token = reqUrl.query['token'];
+		filePathAbs = reqUrl.query['filePathAbs'];
+
+		if (!hostId || !token || !filePathAbs) {
+			res.statusCode = 404;
+			res.end();
 		}
 
-		function respondFile() {
-			console.log('respond file');
-			res.end('respond file. todo');
+		// 先将本条请求记录到表中
+		var tunnelId = tunnelTable.add({
+			res: res,
+			fileName: path.basename(filePathAbs)
+		});
+
+		// 请求客户端上传文件
+		serviceManager.dispatch({
+			funcName: 'Between.sendRequest',
+			args: {
+				hostId: hostId,
+				req: {
+					funcName: 'Upload.uploadFile',
+					args: {
+						filePathAbs: filePathAbs,
+						tunnelId: tunnelId.toString()
+					}
+				}
+			}
+		}, sendRequestSuccess, sendRequestFailure);
+
+		function sendRequestSuccess() {
+			// 什么也不做
 		}
 
-		function receiveFile() {
-			console.log('receive file');
-			var fileName = id + ' ' + info.fileName + ' ' + info.fileSize;
-			fileName = path.resolve(__dirname, '../tmp/', fileName);
-			debugger;
-			var wstream = fs.createWriteStream(fileName);
-			req.pipe(wstream);
+		function sendRequestFailure(err) {
+			// 返回 404
+			res.statusCode = 404;
+			res.end();
 		}
-
 	}
 
-	function queryTunnelInfoFailure(err) {
-		// 没有找到 id 对应的信息
-		res.statusCode = 404;
-		res.end();
-	}
-}
+	function uploadFile() {debugger;
+		var tunnelId,
+			tunnel,
+			contentLength;
 
-function queryTunnelInfo(id, scb, fcb) {
-	serviceManager.dispatch({
-		funcName: 'Tunnel.query',
-		args: {
-			id: id
+		tunnelId = reqUrl.query['tunnelId'];
+
+		// tunnelId 必须提供
+		if (!tunnelId) {
+			// Bad Request
+			res.statusCode = 400;
+			res.end();
+			return;
 		}
-	}, scb, fcb);
+
+		// 根据 tunnelId 进行查询
+		tunnel = tunnelTable.get(tunnelId);
+		if (!tunnel) {
+			// Bad Request
+			res.statusCode = 400;
+			res.end();
+			return;
+		}
+
+		// Content-Length 必须提供
+		contentLength = req.headers['content-length'];
+		if (!contentLength) {
+			// Length Required
+			res.statusCode = 411;
+			res.end();
+			return;
+		}
+
+		contentLength = parseInt(contentLength);
+
+		// 在开始转发之前，首先先把 HTTP 头部字段返回
+		tunnel.res.statusCode = 200;
+		tunnel.res.setHeader('Content-Type', 'application/octet-stream');
+		tunnel.res.setHeader('Content-Length', contentLength);
+		tunnel.res.setHeader('Content-Disposition', 'attachment; filename=' + encodeURIComponent(tunnel.fileName));
+
+		// 开始转发
+		req.pipe(tunnel.res);
+	}
 }

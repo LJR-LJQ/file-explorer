@@ -1,6 +1,6 @@
 // [导出]
-exports.serviceName = 'Download';
-exports.downloadFile = downloadFile;
+exports.serviceName = 'Upload';
+exports.uploadFile = uploadFile;
 
 // [模块]
 var rpc = require('./lib/rpc').rpc;
@@ -9,18 +9,22 @@ var fs = require('fs'),
 	http = require('http');
 
 // [变量]
-// var serverUrl = 'http://www.miaodeli.com/service',
-// 	tunnelUrlBase = 'http://www.miaodeli.com/tunnel';
-var serverUrl = 'http://127.0.0.1/service',
-	tunnelUrlBase = 'http://127.0.0.1/tunnel';
+var uploadToUrlBase = 'http://127.0.0.1/upload';
 
 // [函数]
-function downloadFile(args, callback) {
+function uploadFile(args, callback) {debugger;
 	var filePathAbs,
+		tunnelId,
 		fileName,
 		fileSize;
 
+	tunnelId = args.tunnelId;
 	filePathAbs = args.filePathAbs;
+
+	if (typeof tunnelId !== 'string' || tunnelId === '') {
+		callback({error: 'tunnelId must be string and not empty'});
+		return;
+	}
 
 	if (typeof filePathAbs !== 'string' || filePathAbs === '') {
 		callback({error: 'filePathAbs must be string and not empty'});
@@ -44,26 +48,22 @@ function downloadFile(args, callback) {
 		fileName = path.basename(filePathAbs);
 		fileSize = stat.size;
 
-		// 在发送文件前，需要先向服务器申请一个隧道
-		rpc(serverUrl, 'Tunnel.register', {
-			fileName: fileName,
-			fileSize: fileSize
-		}, registerTunnelSuccess, registerTunnelFailure);
+		// 开始发送文件
+		uploadFile();
 	});
 
-	function registerTunnelSuccess(result) {
-		var tunnelUrl,
+	function uploadFile() {
+		var uploadToUrl,
 			req;
 
-		// 将隧道信息返回给客户端
-		callback(result);
+		// 构造出请求地址
+		uploadToUrl = uploadToUrlBase + '?tunnelId=' + tunnelId;
 
-		// 开始上传
-		tunnelUrl = tunnelUrlBase + '?id=' + encodeURIComponent(result.tunnelId);
+		console.log('upload file to: ' + uploadToUrl);
 
 		// 创建 HTTP 请求
-		req = http.request(tunnelUrl);
-		req.method = 'PUT';debugger;
+		req = http.request(uploadToUrl);
+		req.method = 'PUT';
 		req.setHeader('Content-Length', fileSize);
 		req.setHeader('Content-Type', 'application/octet-stream');
 		req.on('response', onResponse);
@@ -81,10 +81,6 @@ function downloadFile(args, callback) {
 		function onResponse(res) {
 			console.log('file uploaded.');
 		}
-	}
-
-	function registerTunnelFailure(err) {
-		callback({error: 'register tunnel failed'});
 	}
 }
 

@@ -8,19 +8,22 @@ var fs = require('fs'),
 	path = require('path'),
 	http = require('http');
 
-// [变量]
-var uploadToUrlBase = 'http://127.0.0.1/upload';
-//var uploadToUrlBase = 'http://miaodeli.com/upload';
-
 // [函数]
-function uploadFile(args, callback) {
+function uploadFile(args, callback) {debugger;
 	var filePathAbs,
+		_serverUrl,
 		tunnelId,
 		fileName,
 		fileSize;
 
 	tunnelId = args.tunnelId;
 	filePathAbs = args.filePathAbs;
+	_serverUrl = args._serverUrl;
+
+	if (typeof _serverUrl !== 'string' || _serverUrl === '') {
+		callback({error: '_serverUrl must be string and not empty'});
+		return;
+	}
 
 	if (typeof tunnelId !== 'string' || tunnelId === '') {
 		callback({error: 'tunnelId must be string and not empty'});
@@ -40,7 +43,7 @@ function uploadFile(args, callback) {
 	}
 
 	// 获取文件名以及文件大小
-	fs.lstat(filePathAbs, function(err, stat) {
+	fs.lstat(filePathAbs, function(err, stat) {debugger;
 		if (err) {
 			callback({error: 'lstat failed'});
 			return;
@@ -53,12 +56,12 @@ function uploadFile(args, callback) {
 		uploadFile();
 	});
 
-	function uploadFile() {
+	function uploadFile() {debugger;
 		var uploadToUrl,
 			req;
 
 		// 构造出请求地址
-		uploadToUrl = uploadToUrlBase + '?tunnelId=' + tunnelId;
+		uploadToUrl = _serverUrl + '/upload?tunnelId=' + tunnelId;
 
 		console.log('upload file to: ' + uploadToUrl);
 

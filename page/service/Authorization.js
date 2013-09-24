@@ -135,6 +135,9 @@ function dispatch(args, callback) {
 		return;
 	}
 
+	// 注意把 _serverUrl 也继续向下传递
+	req.args._serverUrl = args._serverUrl;
+
 	// 把请求交给服务管理器去分发
 	serviceManager.dispatch(req, callback);
 }

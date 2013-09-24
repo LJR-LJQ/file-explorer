@@ -8,8 +8,10 @@ exports.disable = disable;
 var rpc = require('./lib/rpc').rpc;
 
 // [变量]
-var serverUrl = 'http://127.0.0.1/service';
-//var serverUrl = 'http://miaodeli.com/service';
+var serverUrlList = {
+	'localhost': 'http://127.0.0.1',
+	'miaodeli': 'http://miaodeli.com'
+}
 
 // [流程]
 setTimeout(function() {
@@ -17,7 +19,9 @@ setTimeout(function() {
 	getConfig(function(config) {
 		if (config.enableRemoteAccess === true) {
 			console.log('start RemoteAccess');
-			start();
+			// 既要连接本地，也要连接远程
+			start(serverUrlList['localhost']);
+			start(serverUrlList['miaodeli']);
 		} else {
 			console.log('RemoteAccess is disabled');
 		}
@@ -28,10 +32,12 @@ setTimeout(function() {
 }, 1000);
 
 // [函数]
-function start() {
+function start(serverUrl) {
 	var requesting = false;
 	var hostId,
 		pwd;
+
+	var serviceUrl = serverUrl + '/service';
 
 	// 先注册一个号
 	register(function(obj) {
@@ -95,6 +101,11 @@ function start() {
 
 	function handleRemoteRequest(reqId, req) {
 		console.log(JSON.stringify(req));
+
+		// 注意在分发处理之前，会注入一个 _serverUrl 字段
+		req.args._serverUrl = serverUrl;
+
+		// 开始分发
 		serviceManager.dispatch(req, cb);
 
 		function cb(resObj) {
@@ -118,13 +129,13 @@ function start() {
 	// # scb(obj)
 	// # fcb()
 	function register(scb, fcb) {
-		rpc(serverUrl, 'Between.register', {}, scb, fcb);
+		rpc(serviceUrl, 'Between.register', {}, scb, fcb);
 	}
 
 	// # scb(obj)
 	// # fcb()
 	function receiveRequest(hostId, pwd, scb, fcb) {
-		rpc(serverUrl, 'Between.receiveRequest', {
+		rpc(serviceUrl, 'Between.receiveRequest', {
 			hostId: hostId,
 			pwd: pwd
 		}, scb, fcb);
@@ -133,7 +144,7 @@ function start() {
 	// # scb(obj)
 	// # fcb()
 	function sendResponse(hostId, pwd, reqId, res, scb, fcb) {
-		rpc(serverUrl, 'Between.sendResponse', {
+		rpc(serviceUrl, 'Between.sendResponse', {
 			hostId: hostId,
 			pwd: pwd,
 			reqId: reqId,

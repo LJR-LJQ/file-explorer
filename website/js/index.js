@@ -85,7 +85,7 @@ function onClickLogin() {
 
 function onClickCancelLogin() {
 	++gData.loginSeq;
-	if (disableCancelLoginButton) return;
+	if (gData.disableCancelLoginButton) return;
 	uiPlay('cancelLogin');
 }
 

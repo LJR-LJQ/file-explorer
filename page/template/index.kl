@@ -57,7 +57,7 @@ html
 				div class=notice
 					h2 id=login-progress-title | 登录中
 					h4 id=login-progress-subtitle | 正在验证您的身份，请稍候
-				button onclick=uiPlay('cancelLogin'); class=`btn btn-primary btn-lg` | 取消
+				button onclick=onClickCancelLogin(); class=`btn btn-primary btn-lg` | 取消
 
 			div id=logout-container class=`login animation-container anim-hide none`
 				div class=notice

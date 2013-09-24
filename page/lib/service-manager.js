@@ -38,7 +38,7 @@ function dispatch(req, callback, _rawReq, _rawRes) {
 	funcName = req.funcName;
 	args = req.args;
 
-	console.log('call >> ' + funcName);
+	//console.log('call >> ' + funcName);
 
 	// 从 funcName 中分离出 serviceName 和 func 两部分
 	var serviceName,

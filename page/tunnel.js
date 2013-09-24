@@ -36,7 +36,8 @@ function respond(req, res) {
 		var hostId,
 			token,
 			filePathAbs,
-			tunnelId;
+			tunnelId,
+			serviceObj;
 
 		// hostId, token, filePathAbs 这三个参数必须给出
 		hostId = reqUrl.query['hostId'];
@@ -55,19 +56,8 @@ function respond(req, res) {
 		});
 
 		// 请求客户端上传文件
-		serviceManager.dispatch({
-			funcName: 'Between.sendRequest',
-			args: {
-				hostId: hostId,
-				req: {
-					funcName: 'Upload.uploadFile',
-					args: {
-						filePathAbs: filePathAbs,
-						tunnelId: tunnelId.toString()
-					}
-				}
-			}
-		}, sendRequestSuccess, sendRequestFailure);
+		serviceObj = Between_sendRequest(hostId, Authorization_dispatch(token, Upload_uploadFile(filePathAbs, tunnelId.toString())));
+		serviceManager.dispatch(serviceObj, sendRequestSuccess, sendRequestFailure);
 
 		function sendRequestSuccess() {
 			// 什么也不做
@@ -132,6 +122,36 @@ function respond(req, res) {
 			// Gateway timeout
 			res.statusCode = 504;
 			res.end();
+		}
+	}
+}
+
+function Between_sendRequest(hostId, req) {
+	return {
+		funcName: 'Between.sendRequest',
+		args: {
+			hostId: hostId,
+			req: req
+		}
+	}
+}
+
+function Authorization_dispatch(token, req) {
+	return {
+		funcName: 'Authorization.dispatch',
+		args: {
+			token: token,
+			req: req
+		}
+	}
+}
+
+function Upload_uploadFile(filePathAbs, tunnelId) {
+	return {
+		funcName: 'Upload.uploadFile',
+		args: {
+			filePathAbs: filePathAbs,
+			tunnelId: tunnelId
 		}
 	}
 }

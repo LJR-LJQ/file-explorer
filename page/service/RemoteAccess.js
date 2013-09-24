@@ -8,8 +8,8 @@ exports.disable = disable;
 var rpc = require('./lib/rpc').rpc;
 
 // [变量]
-//var serverUrl = 'http://127.0.0.1/service';
-var serverUrl = 'http://miaodeli.com/service';
+var serverUrl = 'http://127.0.0.1/service';
+//var serverUrl = 'http://miaodeli.com/service';
 
 // [流程]
 setTimeout(function() {

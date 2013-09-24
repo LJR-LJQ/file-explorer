@@ -1,18 +1,18 @@
 var gData = {
+	loginSeq: 0,
+	disableCancelLoginButton: false,
 	hostId: undefined,
 	currentPath: undefined
-}
-
-function resetUI() {
-	// 恢复登录进度状态
-	setLoginProgressDom('登录中', '正在验证您的身份，请稍候');
 }
 
 /* 用户操作事件处理函数 */
 
 function onClickLogin() {
 	var hostId,
-		password;
+		password,
+		loginSeq;
+
+	var startTime;
 
 	hostId = $('#host-id').val();
 	password = $('#password').val();
@@ -27,16 +27,31 @@ function onClickLogin() {
 		return;
 	}
 
-	// 重置 UI
-	resetUI();
+	// 重置登录 UI
+	initLoginProgressUI();
 
 	// 转入登录中界面
 	transitionBetween('#login-container', '#login-progress-container', function() {
+		loginSeq = gData.loginSeq;
+
+		// 记录下此时的时间
+		startTime = new Date();
+
 		// 提交登录数据
 		auth(hostId, password, success, failure);
 	});
 
 	function success(result) {
+		if (loginSeq !== gData.loginSeq) {
+			console.log('different loginSeq, canceled');
+			return;
+		}
+		// 提示登录成功
+		updateLoginProgressUI('登录成功', '您的身份已经通过验证，即将转入主界面');
+
+		// 登录已经成功，不允许再取消登录
+		gData.disableCancelLoginButton = true;
+
 		console.log('success');
 		console.log(result);
 
@@ -45,7 +60,7 @@ function onClickLogin() {
 		gData.token = result.token;
 
 		// 更新左上角的主机编号
-		setHostIdDom(hostId);
+		updateHostIdUI(hostId);
 
 		// 加载数据
 		loadDir('/');
@@ -53,8 +68,10 @@ function onClickLogin() {
 		// 加载配置信息
 		loadRemoteAccessConfig();
 
-		// 转入主界面
-		transitionBetween('#login-progress-container', '#file-explorer-container');
+		setTimeout(function() {
+			// 转入主界面
+			transitionBetween('#login-progress-container', '#file-explorer-container');
+		}, (new Date() - startTime) < 1000 ? 1000 : 0);
 	}
 
 	function failure(err) {
@@ -62,8 +79,14 @@ function onClickLogin() {
 		console.log(err);
 
 		// 显示登录失败信息
-		setLoginProgressDom('登录失败', '您的身份未能通过验证，请重试');
+		updateLoginProgressUI('登录失败', '您的身份未能通过验证，请重试');
 	}
+}
+
+function onClickCancelLogin() {
+	++gData.loginSeq;
+	if (disableCancelLoginButton) return;
+	uiPlay('cancelLogin');
 }
 
 function onClickComputer() {
@@ -202,9 +225,9 @@ function loadDir(path) {
 		gData.currentPath = result.path;
 
 		// 显示到界面上
-		setPathDom(result.path);
-		setDirListDom(result.dirList);
-		setFileListDom(result.fileList);
+		updatePathUI(result.path);
+		updateDirListUI(result.dirList);
+		updateFileListUI(result.fileList);
 	}
 
 	function failure(err) {
@@ -215,7 +238,7 @@ function loadDir(path) {
 
 function loadFile(fileName, filePathAbs) {
 	// 先清空一下当前数据
-	setFileInfoDom(fileName, '', '', '', '');
+	updateFileInfoUI(fileName, '', '', '', '');
 
 	// 弹出文件对话框
 	$('#file-modal').modal('show');
@@ -224,7 +247,7 @@ function loadFile(fileName, filePathAbs) {
 	queryFileInfo(filePathAbs, success, failure);
 
 	function success(result) {
-		setFileInfoDom(fileName, result.size, result.ctime, result.mtime, result.atime);
+		updateFileInfoUI(fileName, result.size, result.ctime, result.mtime, result.atime);
 	}
 
 	function failure(err) {
@@ -268,16 +291,24 @@ function showUI(selector, scb) {
 }
 
 /* DOM 写入函数 */
-function setHostIdDom(hostId) {
+
+function initLoginProgressUI() {
+	// 恢复登录进度状态
+	updateLoginProgressUI('登录中', '正在验证您的身份，请稍候');
+	// 允许取消登录
+	gData.disableCancelLoginButton = false;
+}
+
+function updateHostIdUI(hostId) {
 	$('#host-id-text').text('主机编号 ' + hostId);
 }
 
-function setLoginProgressDom(title, subtitle) {
+function updateLoginProgressUI(title, subtitle) {
 	$('#login-progress-title').text(title);
 	$('#login-progress-subtitle').text(subtitle);
 }
 
-function setPathDom(path) {
+function updatePathUI(path) {
 	var container = $('#position-list');
 	container.empty();
 
@@ -303,7 +334,7 @@ function setPathDom(path) {
 	}
 }
 
-function setDirListDom(dirList) {
+function updateDirListUI(dirList) {
 	var container = $('#dir-list');
 	container.empty();
 
@@ -330,7 +361,7 @@ function setDirListDom(dirList) {
 	}
 }
 
-function setFileListDom(fileList) {
+function updateFileListUI(fileList) {
 	var container = $('#file-list');
 	container.empty();
 
@@ -357,7 +388,7 @@ function setFileListDom(fileList) {
 	}
 }
 
-function setFileInfoDom(fileName, fileSize, ctime, mtime, atime) {
+function updateFileInfoUI(fileName, fileSize, ctime, mtime, atime) {
 	$('#file-name').text(fileName);
 	$('#file-size').text(fileSize);
 	$('#ctime').text(ctime);
